@@ -1,61 +1,106 @@
 import os
 import sys
-import json
-from pathlib import Path
 import argparse
+import time
 
-# Add project root to path
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+def run_scan(args):
+    """Run standard directory scan"""
+    if args.llm:
+        print("[LLM AGENT] Using LLM Agents...")
+        from core.llm_screener import LLMScreener
+        screener = LLMScreener(use_gpu=args.gpu)
+    else:
+        print("[RULE-BASED] Using Rule-Based Screener...")
+        from core.screener import RealisticResumeScreener
+        screener = RealisticResumeScreener()
+    
+    # Handle sample creation if folder empty/not found
+    if not os.path.exists("./resumes") or not os.listdir("./resumes"):
+        print("Folder empty or not found. Creating samples...")
+        if hasattr(screener, 'create_realistic_sample_resumes'):
+             screener.create_realistic_sample_resumes()
+        else:
+             # LLMScreener doesn't have this method yet, fallback
+             from core.screener import RealisticResumeScreener
+             rs = RealisticResumeScreener()
+             rs.create_realistic_sample_resumes()
+             
+    if args.llm:
+        results = screener.batch_process(args.dir, target_position=args.position)
+        # TODO: Implement Decision Making display for LLMScreener
+        if results:
+             decision = screener.make_hiring_decision(results)
+             print("\n[CEO AGENT DECISION]:")
+             print(f"Decision: {decision.get('reasoning')}")
+    else:
+        screener.run_screening(target_position=args.position)
 
-# Import after path is set
-from simple_resume_screener import SimpleResumeScreener
+def run_web_app(args):
+    """Launch Streamlit Web UI"""
+    print("[WEB] Launching Web UI...")
+    os.system("streamlit run web_app.py")
+
+def run_email_agent(args):
+    """Run Email Agent"""
+    from agents.email_agent.email_agent import EmailAgent
+    
+    print("[EMAIL] Starting Email Agent...")
+    print(f"   Mode: {'Continuous' if args.continuous else 'Run Once'}")
+    
+    if args.llm:
+         print("[LLM] Using LLM Agents for Email Screening...")
+         from core.llm_screener import LLMScreener
+         screener = LLMScreener(use_gpu=args.gpu)
+         agent = EmailAgent(screener=screener)
+    else:
+         agent = EmailAgent()
+    
+    if args.continuous:
+        agent.run_continuously(interval_minutes=args.interval)
+    else:
+        agent.run_once()
 
 def main():
-    """Main function - simplified version"""
+    parser = argparse.ArgumentParser(description="AI Resume Screening System")
+    subparsers = parser.add_subparsers(dest="mode", help="Mode of operation")
     
-    parser = argparse.ArgumentParser(description="Resume Screening System")
-    parser.add_argument("--resumes", type=str, help="Path to resume file or directory")
-    parser.add_argument("--top-n", type=int, default=5, help="Number of top candidates")
-    parser.add_argument("--criteria", type=str, help="JSON criteria for selection")
+    # Scan Mode
+    scan_parser = subparsers.add_parser("scan", help="Scan a directory of resumes")
+    scan_parser.add_argument("--dir", default="./resumes", help="Directory to scan")
+    scan_parser.add_argument("--position", default="software_engineer", help="Target position")
+    scan_parser.add_argument("--llm", action="store_true", help="Use LLM Agents")
+    scan_parser.add_argument("--gpu", action="store_true", help="Force GPU usage for local models")
+    
+    # Web Mode
+    web_parser = subparsers.add_parser("web", help="Launch Web Interface")
+    
+    # Email Mode
+    email_parser = subparsers.add_parser("email", help="Run Email Agent")
+    email_parser.add_argument("--continuous", action="store_true", help="Run continuously")
+    email_parser.add_argument("--interval", type=int, default=5, help="Interval in minutes")
+    email_parser.add_argument("--llm", action="store_true", help="Use LLM Agents")
+    email_parser.add_argument("--gpu", action="store_true", help="Force GPU usage for local models")
     
     args = parser.parse_args()
     
-    # Parse criteria if provided
-    criteria = {}
-    if args.criteria:
-        try:
-            criteria = json.loads(args.criteria)
-        except:
-            print("Warning: Invalid criteria JSON, using defaults")
-    
-    print("\n" + "="*60)
-    print("RESUME SCREENING SYSTEM")
-    print("="*60)
-    
-    # Use the SimpleResumeScreener (works without LLMs)
-    screener = SimpleResumeScreener()
-    
-    # Determine input folder
-    if args.resumes:
-        if os.path.isdir(args.resumes):
-            input_folder = args.resumes
-        elif os.path.isfile(args.resumes):
-            # Create temp folder for single file
-            import tempfile
-            temp_dir = tempfile.mkdtemp()
-            import shutil
-            shutil.copy(args.resumes, temp_dir)
-            input_folder = temp_dir
-        else:
-            print(f"Error: {args.resumes} not found")
-            return
+    if args.mode == "scan":
+        run_scan(args)
+    elif args.mode == "web":
+        run_web_app(args)
+    elif args.mode == "email":
+        run_email_agent(args)
     else:
-        input_folder = "./resumes"  # Default folder
-    
-    # Run the screener
-    report = screener.run_pipeline(input_folder=input_folder, criteria=criteria)
-    
-    print("\n✅ Process completed!")
+        # Default behavior if no arguments
+        print("No mode specified. Using default: scan")
+        # You could verify if user wants web or scan by default, but let's default to scan for CLI users
+        # For better UX, let's show help
+        parser.print_help()
+        
+        # Or just run the scan as a fallback like the old main.py
+        print("\n--- Defaulting to Scan Mode ---")
+        class Args:
+             position = "software_engineer"
+        run_scan(Args())
 
 if __name__ == "__main__":
     main()

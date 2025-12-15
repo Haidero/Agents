@@ -1,0 +1,129 @@
+2025-12-15 17:58:30,804 - INFO - [OK] Loaded config from email_config.json
+2025-12-15 17:58:30,806 - INFO - [INFO] Using injected screener: LLMScreener
+2025-12-15 17:58:30,807 - INFO - [INFO] Email Agent Initialized
+2025-12-15 17:58:30,807 - INFO - [INFO] Starting email screening cycle
+2025-12-15 17:58:33,287 - INFO - [OK] Connected to email server
+2025-12-15 17:58:33,692 - INFO - [INFO] Found 7 new emails
+2025-12-15 17:58:34,107 - INFO - [INFO] Processing email: Login Attempt Failed from e.statement@telenorbank.pk
+2025-12-15 17:58:34,938 - INFO - [INFO] Processing email: HR internship at iTech Gemini and 19 more intern jobs in Rawalpindi for you! from alert@indeed.com
+2025-12-15 17:58:35,559 - INFO - [INFO] Processing email: Data Entry (Video Annotation) Night shift at ePlanet communications and 26 more night shift jobs in Karachi for you! from alert@indeed.com
+2025-12-15 17:58:37,839 - INFO - [INFO] Processing email:  from zafarshaheen789@gmail.com
+2025-12-15 17:58:37,848 - INFO - [INFO] Saved attachment: 20251215_175837_8090_Touqeer_CV.pdf
+2025-12-15 17:58:38,508 - INFO - [INFO] Processing email: Apply for job Data science from zafarshaheen789@gmail.com
+2025-12-15 17:58:38,511 - INFO - [INFO] Saved attachment: 20251215_175838_8090_Sheeza_Habib..pdf
+2025-12-15 17:58:39,124 - INFO - [OK] Found 4 emails with resumes
+2025-12-15 17:58:39,126 - WARNING - [WARN] Email from alert@indeed.com has no attachments. Skipping.
+2025-12-15 17:58:39,128 - WARNING - [WARN] Email from alert@indeed.com has no attachments. Skipping.
+2025-12-15 17:58:39,304 - INFO - [INFO] Screened: Zafar Iqbal - Score: 82/100 - Status: Accepted
+2025-12-15 17:58:39,323 - WARNING - Could get FontBBox from font descriptor because None cannot be parsed as 4 floats
+2025-12-15 17:58:39,329 - WARNING - Could get FontBBox from font descriptor because None cannot be parsed as 4 floats
+2025-12-15 17:58:39,332 - WARNING - Could get FontBBox from font descriptor because None cannot be parsed as 4 floats
+2025-12-15 17:58:39,338 - WARNING - Could get FontBBox from font descriptor because None cannot be parsed as 4 floats
+2025-12-15 17:58:39,347 - WARNING - Could get FontBBox from font descriptor because None cannot be parsed as 4 floats
+2025-12-15 17:58:39,706 - WARNING - Could get FontBBox from font descriptor because None cannot be parsed as 4 floats
+2025-12-15 17:58:39,708 - WARNING - Could get FontBBox from font descriptor because None cannot be parsed as 4 floats
+2025-12-15 17:58:39,712 - WARNING - Could get FontBBox from font descriptor because None cannot be parsed as 4 floats
+2025-12-15 17:58:39,719 - WARNING - Could get FontBBox from font descriptor because None cannot be parsed as 4 floats
+2025-12-15 17:58:39,762 - INFO - [INFO] Screened: Zafar Iqbal - Score: 71/100 - Status: Needs Review
+2025-12-15 17:58:43,828 - INFO - [INFO] Sent response to: zafarshaheen789@gmail.com
+2025-12-15 17:58:47,109 - INFO - [INFO] Sent response to: zafarshaheen789@gmail.com
+2025-12-15 17:58:47,132 - INFO - [INFO] Saved results: ./email_results\email_results_20251215_175847.json
+2025-12-15 17:58:47,134 - INFO - 
+        [OK] Screening Cycle Complete:
+           • Emails processed: 4
+           • Resumes screened: 2
+           • Accepted: 1
+           • Needs Review: 1
+           • Rejected: 0
+           • Average Score: 76.5/100
+           • Responses Sent: 2
+        
+2025-12-15 18:14:16,085 - INFO - [OK] Loaded config from email_config.json
+2025-12-15 18:14:16,086 - INFO - [INFO] Using injected screener: LLMScreener
+2025-12-15 18:14:16,086 - INFO - [INFO] Email Agent Initialized
+2025-12-15 18:14:16,086 - INFO - [INFO] Starting email screening cycle
+2025-12-15 18:14:18,538 - INFO - [OK] Connected to email server
+2025-12-15 18:14:18,845 - INFO - [INFO] Found 3 new emails
+2025-12-15 18:14:19,368 - INFO - [INFO] Processing email: Login Attempt Failed from e.statement@telenorbank.pk
+2025-12-15 18:14:20,842 - INFO - [INFO] Processing email:  from zafarshaheen789@gmail.com
+2025-12-15 18:14:20,854 - INFO - [INFO] Saved attachment: 20251215_181420_2418_Noman_Sarwar-Resume.pdf
+2025-12-15 18:14:21,845 - INFO - [INFO] Processing email:  from zafarshaheen789@gmail.com
+2025-12-15 18:14:21,855 - INFO - [INFO] Saved attachment: 20251215_181421_2418_Noman_Sarwar-Resume.pdf
+2025-12-15 18:14:22,534 - INFO - [OK] Found 2 emails with resumes
+2025-12-15 18:14:22,858 - INFO - [INFO] Screened: Zafar Iqbal - Score: 83/100 - Status: Accepted
+2025-12-15 18:14:23,334 - INFO - [INFO] Screened: Zafar Iqbal - Score: 87/100 - Status: Accepted
+2025-12-15 18:14:28,069 - INFO - [INFO] Sent response to: zafarshaheen789@gmail.com
+2025-12-15 18:14:31,651 - INFO - [INFO] Sent response to: zafarshaheen789@gmail.com
+2025-12-15 18:14:31,681 - INFO - [INFO] Saved results: ./email_results\email_results_20251215_181431.json
+2025-12-15 18:14:31,682 - INFO - 
+        [OK] Screening Cycle Complete:
+           • Emails processed: 2
+           • Resumes screened: 2
+           • Accepted: 2
+           • Needs Review: 0
+           • Rejected: 0
+           • Average Score: 85.0/100
+           • Responses Sent: 2
+        
+2025-12-15 18:17:38,308 - INFO - [OK] Loaded config from email_config.json
+2025-12-15 18:17:38,309 - INFO - [INFO] Using injected screener: LLMScreener
+2025-12-15 18:17:38,309 - INFO - [INFO] Email Agent Initialized
+2025-12-15 18:17:38,310 - INFO - [INFO] Starting email screening cycle
+2025-12-15 18:17:41,000 - INFO - [OK] Connected to email server
+2025-12-15 18:17:41,393 - INFO - [INFO] Found 0 new emails
+2025-12-15 18:17:42,016 - INFO - [OK] Found 0 emails with resumes
+2025-12-15 18:17:42,017 - INFO - [INFO] No new resumes found
+2025-12-15 18:22:17,452 - INFO - [OK] Loaded config from email_config.json
+2025-12-15 18:22:17,455 - INFO - [INFO] Using injected screener: LLMScreener
+2025-12-15 18:22:17,456 - INFO - [INFO] Email Agent Initialized
+2025-12-15 18:22:17,456 - INFO - [INFO] Starting email screening cycle
+2025-12-15 18:22:20,026 - INFO - [OK] Connected to email server
+2025-12-15 18:22:20,330 - INFO - [INFO] Found 3 new emails
+2025-12-15 18:22:20,946 - INFO - [OK] Found 0 emails with resumes
+2025-12-15 18:22:20,947 - INFO - [INFO] No new resumes found
+2025-12-15 18:24:29,296 - INFO - [OK] Loaded config from email_config.json
+2025-12-15 18:24:29,298 - INFO - [INFO] Using injected screener: LLMScreener
+2025-12-15 18:24:29,298 - INFO - [INFO] Email Agent Initialized
+2025-12-15 18:24:29,298 - INFO - [INFO] Starting email screening cycle
+2025-12-15 18:24:31,524 - INFO - [OK] Connected to email server
+2025-12-15 18:24:31,914 - INFO - [INFO] Found 3 new emails
+2025-12-15 18:24:32,533 - INFO - [OK] Found 0 emails with resumes
+2025-12-15 18:24:32,534 - INFO - [INFO] No new resumes found
+2025-12-15 18:25:28,802 - INFO - [OK] Loaded config from email_config.json
+2025-12-15 18:25:28,803 - INFO - [INFO] Using injected screener: LLMScreener
+2025-12-15 18:25:28,803 - INFO - [INFO] Email Agent Initialized
+2025-12-15 18:25:28,804 - INFO - [INFO] Starting email screening cycle
+2025-12-15 18:25:30,999 - INFO - [OK] Connected to email server
+2025-12-15 18:25:31,306 - INFO - [INFO] Found 3 new emails
+2025-12-15 18:25:31,922 - INFO - [OK] Found 0 emails with resumes
+2025-12-15 18:25:31,922 - INFO - [INFO] No new resumes found
+2025-12-15 18:30:45,000 - INFO - [OK] Loaded config from email_config.json
+2025-12-15 18:30:45,002 - INFO - [INFO] Using injected screener: LLMScreener
+2025-12-15 18:30:45,002 - INFO - [INFO] Email Agent Initialized
+2025-12-15 18:30:45,002 - INFO - [INFO] Starting email screening cycle
+2025-12-15 18:30:46,814 - INFO - [OK] Connected to email server
+2025-12-15 18:30:47,108 - INFO - [INFO] Found 4 new emails
+2025-12-15 18:30:48,578 - INFO - [INFO] Processing email:  from zafarshaheen789@gmail.com
+2025-12-15 18:30:48,583 - INFO - [INFO] Saved attachment: 20251215_183048_5341_Noman_Sarwar-Resume.pdf
+2025-12-15 18:30:49,264 - INFO - [OK] Found 1 emails with resumes
+2025-12-15 18:30:49,603 - INFO - [INFO] Screened: Zafar Iqbal - Score: 75/100 - Status: Needs Review
+2025-12-15 18:30:53,356 - INFO - [INFO] Sent response to: zafarshaheen789@gmail.com
+2025-12-15 18:30:53,367 - INFO - [INFO] Saved results: ./email_results\email_results_20251215_183053.json
+2025-12-15 18:30:53,367 - INFO - 
+        [OK] Screening Cycle Complete:
+           • Emails processed: 1
+           • Resumes screened: 1
+           • Accepted: 0
+           • Needs Review: 1
+           • Rejected: 0
+           • Average Score: 75.0/100
+           • Responses Sent: 1
+        
+2025-12-15 18:32:07,059 - INFO - [OK] Loaded config from email_config.json
+2025-12-15 18:32:07,062 - INFO - [INFO] Using injected screener: LLMScreener
+2025-12-15 18:32:07,062 - INFO - [INFO] Email Agent Initialized
+2025-12-15 18:32:07,062 - INFO - [INFO] Starting email screening cycle
+2025-12-15 18:32:08,944 - INFO - [OK] Connected to email server
+2025-12-15 18:32:09,253 - INFO - [INFO] Found 3 new emails
+2025-12-15 18:32:09,951 - INFO - [OK] Found 0 emails with resumes
+2025-12-15 18:32:09,951 - INFO - [INFO] No new resumes found

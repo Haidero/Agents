@@ -12,12 +12,6 @@ from typing import List, Dict, Any
 import pandas as pd
 from datetime import datetime
 
-print("\n" + "="*60)
-print("📊 REALISTIC RESUME SCREENING SYSTEM")
-print("="*60)
-print("Based on the research paper: 'Application of LLM Agents in Recruitment'")
-print()
-
 class RealisticResumeScreener:
     """Realistic resume screening with better scoring"""
     
@@ -184,9 +178,7 @@ class RealisticResumeScreener:
         
         if not os.path.exists(folder_path):
             print(f"❌ Folder not found: {folder_path}")
-            print("📁 Creating NEW realistic sample resumes...")
-            self.create_realistic_sample_resumes()
-            folder_path = "./resumes"
+            return []
         
         print(f"\n📂 Processing resumes from: {folder_path}")
         print(f"🎯 Target position: {target_position.replace('_', ' ').title()}")
@@ -350,7 +342,7 @@ class RealisticResumeScreener:
               * Participated in code reviews
               * Technologies: Python, JavaScript, HTML/CSS
             
-            EDUCATION:
+            - Education:
             - BS in Computer Science, Community College
             
             SKILLS:
@@ -404,11 +396,58 @@ class RealisticResumeScreener:
                 f.write(content.strip())
         
         print("✅ Created 4 realistic resumes (varying quality) in './resumes/'")
-        print("   - expert_devops.txt (Expert level)")
-        print("   - good_data_scientist.txt (Good level)")
-        print("   - average_engineer.txt (Average level)")
-        print("   - junior_developer.txt (Junior level)")
     
+    def generate_recommendation_reason(self, candidate, target_position):
+        """Generate reason for recommendation (like in paper)"""
+        reasons = []
+        
+        if candidate["grade"] >= 85:
+            reasons.append("High overall score")
+        elif candidate["grade"] >= 70:
+            reasons.append("Good overall score")
+        
+        if candidate["position_match"] >= 80:
+            reasons.append("Excellent skill match for position")
+        elif candidate["position_match"] >= 60:
+            reasons.append("Good skill match")
+        
+        if candidate["years_experience"] >= 5:
+            reasons.append("Significant experience")
+        elif candidate["years_experience"] >= 3:
+            reasons.append("Adequate experience")
+        
+        if "Developer" in candidate["categories"] and target_position == "software_engineer":
+            reasons.append("Strong developer profile")
+        
+        if "Data Science" in candidate["categories"] and target_position == "data_scientist":
+            reasons.append("Strong data science background")
+        
+        if "Cloud/DevOps" in candidate["categories"] and target_position == "devops":
+            reasons.append("Strong DevOps/cloud expertise")
+        
+        return "; ".join(reasons) if reasons else "Meets basic requirements"
+
+    def extract_experience(self, text):
+        """Extract years of experience"""
+        years_exp = 0
+        year_match = re.search(r'(\d+)\s+years?\s+experience', text.lower())
+        if year_match:
+            years_exp = int(year_match.group(1))
+        else:
+            # Try to estimate from dates
+            year_pattern = r'(?:19|20)\d{2}'
+            years = re.findall(year_pattern, text)
+            if len(years) >= 2:
+                try:
+                    years_numeric = [int(y) for y in years if 1900 <= int(y) <= 2024]
+                    if years_numeric:
+                        years_exp = (max(years_numeric) - min(years_numeric)) / 10
+                        if years_exp > 20:
+                            years_exp = 20
+                except:
+                    pass
+        return round(years_exp, 1)
+
     def run_screening(self, target_position="software_engineer"):
         """Run the complete screening process"""
         print("\n" + "="*60)
@@ -498,70 +537,3 @@ class RealisticResumeScreener:
         print("="*60)
         
         return results
-    
-    def generate_recommendation_reason(self, candidate, target_position):
-        """Generate reason for recommendation (like in paper)"""
-        reasons = []
-        
-        if candidate["grade"] >= 85:
-            reasons.append("High overall score")
-        elif candidate["grade"] >= 70:
-            reasons.append("Good overall score")
-        
-        if candidate["position_match"] >= 80:
-            reasons.append("Excellent skill match for position")
-        elif candidate["position_match"] >= 60:
-            reasons.append("Good skill match")
-        
-        if candidate["years_experience"] >= 5:
-            reasons.append("Significant experience")
-        elif candidate["years_experience"] >= 3:
-            reasons.append("Adequate experience")
-        
-        if "Developer" in candidate["categories"] and target_position == "software_engineer":
-            reasons.append("Strong developer profile")
-        
-        if "Data Science" in candidate["categories"] and target_position == "data_scientist":
-            reasons.append("Strong data science background")
-        
-        if "Cloud/DevOps" in candidate["categories"] and target_position == "devops":
-            reasons.append("Strong DevOps/cloud expertise")
-        
-        return "; ".join(reasons) if reasons else "Meets basic requirements"
-
-# Run the screener
-if __name__ == "__main__":
-    import sys
-    
-    # Get target position from command line or use default
-    target_position = "software_engineer"
-    if len(sys.argv) > 1:
-        target_position = sys.argv[1].lower()
-    
-    # Validate position
-    valid_positions = ["software_engineer", "data_scientist", "devops", "full_stack"]
-    if target_position not in valid_positions:
-        print(f"⚠️  Unknown position: {target_position}")
-        print(f"   Using default: software_engineer")
-        print(f"   Valid positions: {', '.join(valid_positions)}")
-        target_position = "software_engineer"
-    
-    screener = RealisticResumeScreener()
-    results = screener.run_screening(target_position)
-    
-    print(f"\n💡 RESEARCH PAPER COMPARISON:")
-    print("   Paper reported: 87.73% F1 score for classification")
-    print("   Paper reported: 81.35% grade accuracy (±5 points)")
-    print("   Paper reported: 11x faster than manual screening")
-    
-    print(f"\n📋 TO TRY DIFFERENT POSITIONS:")
-    print("   python realistic_screener.py software_engineer")
-    print("   python realistic_screener.py data_scientist")
-    print("   python realistic_screener.py devops")
-    print("   python realistic_screener.py full_stack")
-    
-    # Optional: Wait for user input
-    try:
-        input("\nPress Enter to exit...")
-    except:
-        pass

@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  # Container 1: Web Interface
+  web_app:
+    build: .
+    container_name: resume_screener_web
+    ports:
+      - "8501:8501"
+    volumes:
+      - .:/app
+    command: streamlit run web_app.py --server.address=0.0.0.0
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  # Container 2: Email Agent (Background Worker)
+  email_agent:
+    build: .
+    container_name: resume_screener_agent
+    volumes:
+      - .:/app
+    # Runs continuously, checking every 5 minutes
+    command: python main.py email --continuous --interval 5 --llm
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - web_app

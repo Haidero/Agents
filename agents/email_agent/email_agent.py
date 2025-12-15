@@ -34,28 +34,41 @@ logger = logging.getLogger(__name__)
 class EmailAgent:
     """Email agent that checks, downloads, and processes resumes"""
     
-    def __init__(self, config_file: str = "email_config.json"):
+    def __init__(self, config_file: str = "email_config.json", screener: Optional[Any] = None):
         """
         Initialize email agent with configuration
         
         Args:
             config_file: Path to email configuration file
+            screener: Optional Screener instance (RealisticResumeScreener or LLMScreener)
         """
         self.config = self.load_config(config_file)
         self.processed_emails_file = "processed_emails.json"
         self.processed_emails = self.load_processed_emails()
         
         # Create directories
-        self.attachments_dir = "./email_resumes"
+        # Save directly to main resumes folder so they appear in UI/Scan
+        self.attachments_dir = "./resumes" 
         self.results_dir = "./email_results"
         os.makedirs(self.attachments_dir, exist_ok=True)
         os.makedirs(self.results_dir, exist_ok=True)
         
         # Initialize resume processor
-        from realistic_screener import RealisticResumeScreener
-        self.screener = RealisticResumeScreener()
+        if screener:
+            self.screener = screener
+            logger.info(f"[INFO] Using injected screener: {type(screener).__name__}")
+        else:
+            try:
+                from core.screener import RealisticResumeScreener
+                self.screener = RealisticResumeScreener()
+                logger.info("[INFO] Using default RealisticResumeScreener")
+            except ImportError:
+                import sys
+                sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+                from core.screener import RealisticResumeScreener
+                self.screener = RealisticResumeScreener()
         
-        logger.info("📧 Email Agent Initialized")
+        logger.info("[INFO] Email Agent Initialized")
     
     def load_config(self, config_file: str) -> Dict:
         """Load email configuration from JSON file"""
@@ -124,13 +137,13 @@ class EmailAgent:
                 user_config = json.load(f)
                 # Merge with default config
                 default_config.update(user_config)
-                logger.info(f"✅ Loaded config from {config_file}")
+                logger.info(f"[OK] Loaded config from {config_file}")
         else:
             # Create sample config file
             with open(config_file, 'w') as f:
                 json.dump(default_config, f, indent=2)
-            logger.info(f"📝 Created sample config file: {config_file}")
-            logger.info("⚠️ Please edit the config file with your email credentials")
+            logger.info(f"[INFO] Created sample config file: {config_file}")
+            logger.info("[WARN] Please edit the config file with your email credentials")
         
         return default_config
     
@@ -163,10 +176,10 @@ class EmailAgent:
                 self.config["email"]["password"]
             )
             mail.select(self.config["email"]["folder"])
-            logger.info("✅ Connected to email server")
+            logger.info("[OK] Connected to email server")
             return mail
         except Exception as e:
-            logger.error(f"❌ Failed to connect to email: {e}")
+            logger.error(f"[ERROR] Failed to connect to email: {e}")
             return None
     
     def check_for_new_resumes(self) -> List[Dict]:
@@ -193,7 +206,7 @@ class EmailAgent:
                 return []
             
             email_ids = messages[0].split()
-            logger.info(f"📨 Found {len(email_ids)} new emails")
+            logger.info(f"[INFO] Found {len(email_ids)} new emails")
             
             for email_id in email_ids[:50]:  # Process max 50 at a time
                 email_id_str = email_id.decode()
@@ -217,7 +230,7 @@ class EmailAgent:
                 from_email = self.extract_email_address(email_message['From'])
                 sender_name = self.extract_sender_name(email_message['From'])
                 
-                logger.info(f"📧 Processing email: {subject} from {from_email}")
+                logger.info(f"[INFO] Processing email: {subject} from {from_email}")
                 
                 # Check for attachments
                 attachments = []
@@ -275,11 +288,11 @@ class EmailAgent:
             mail.close()
             mail.logout()
             
-            logger.info(f"✅ Found {len(new_resumes)} emails with resumes")
+            logger.info(f"[OK] Found {len(new_resumes)} emails with resumes")
             return new_resumes
             
         except Exception as e:
-            logger.error(f"❌ Error checking email: {e}")
+            logger.error(f"[ERROR] Error checking email: {e}")
             try:
                 mail.close()
                 mail.logout()
@@ -365,11 +378,11 @@ class EmailAgent:
             with open(filepath, 'wb') as f:
                 f.write(file_data)
             
-            logger.info(f"💾 Saved attachment: {unique_filename}")
+            logger.info(f"[INFO] Saved attachment: {unique_filename}")
             return filepath
             
         except Exception as e:
-            logger.error(f"❌ Error saving attachment {filename}: {e}")
+            logger.error(f"[ERROR] Error saving attachment {filename}: {e}")
             return None
     
     def extract_candidate_info(self, email_body: str, email_address: str, sender_name: str) -> Dict:
@@ -427,6 +440,11 @@ class EmailAgent:
         for email_data in email_resumes:
             candidate_id = f"{email_data['from_email']}_{datetime.now().strftime('%Y%m%d')}"
             
+            # Check if there are attachments
+            if not email_data["attachments"]:
+                logger.warning(f"[WARN] Email from {email_data['from_email']} has no attachments. Skipping.")
+                continue
+
             # Process each attachment
             for attachment in email_data["attachments"]:
                 try:
@@ -503,10 +521,10 @@ class EmailAgent:
                     }
                     
                     results.append(result)
-                    logger.info(f"📊 Screened: {email_data['sender_name']} - Score: {grade}/100 - Status: {status}")
+                    logger.info(f"[INFO] Screened: {email_data['sender_name']} - Score: {grade}/100 - Status: {status}")
                     
                 except Exception as e:
-                    logger.error(f"❌ Error processing resume {attachment['filename']}: {e}")
+                    logger.error(f"[ERROR] Error processing resume {attachment['filename']}: {e}")
         
         return results
     
@@ -525,13 +543,13 @@ class EmailAgent:
                 with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
                     text = f.read()
             else:
-                logger.warning(f"⚠️ Unsupported file type: {filepath}")
+                logger.warning(f"[WARN] Unsupported file type: {filepath}")
                 return ""
             
             return text.strip()
             
         except Exception as e:
-            logger.error(f"❌ Error reading file {filepath}: {e}")
+            logger.error(f"[ERROR] Error reading file {filepath}: {e}")
             return ""
     
     def send_email_response(self, result: Dict) -> bool:
@@ -571,11 +589,11 @@ class EmailAgent:
                 )
                 server.send_message(msg)
             
-            logger.info(f"📤 Sent response to: {result['email_data']['from']}")
+            logger.info(f"[INFO] Sent response to: {result['email_data']['from']}")
             return True
             
         except Exception as e:
-            logger.error(f"❌ Error sending email to {result['email_data']['from']}: {e}")
+            logger.error(f"[ERROR] Error sending email to {result['email_data']['from']}: {e}")
             return False
     
     def save_results(self, results: List[Dict]):
@@ -615,7 +633,7 @@ class EmailAgent:
             csv_file = os.path.join(self.results_dir, f"email_summary_{timestamp}.csv")
             df.to_csv(csv_file, index=False)
         
-        logger.info(f"💾 Saved results: {json_file}")
+        logger.info(f"[INFO] Saved results: {json_file}")
     
     def run_once(self, send_responses: bool = True) -> Dict:
         """
@@ -626,20 +644,20 @@ class EmailAgent:
         
         Returns summary of the run
         """
-        logger.info("🔄 Starting email screening cycle")
+        logger.info("[INFO] Starting email screening cycle")
         
         # Step 1: Check for new resumes
         new_resumes = self.check_for_new_resumes()
         
         if not new_resumes:
-            logger.info("📭 No new resumes found")
+            logger.info("[INFO] No new resumes found")
             return {"status": "no_new_resumes"}
         
         # Step 2: Process resumes
         results = self.process_resumes(new_resumes)
         
         if not results:
-            logger.info("📄 No valid resumes processed")
+            logger.info("[INFO] No valid resumes processed")
             return {"status": "no_valid_resumes"}
         
         # Step 3: Send responses if enabled
@@ -667,7 +685,7 @@ class EmailAgent:
         }
         
         logger.info(f"""
-        ✅ Screening Cycle Complete:
+        [OK] Screening Cycle Complete:
            • Emails processed: {summary['total_emails']}
            • Resumes screened: {summary['total_resumes']}
            • Accepted: {summary['accepted']}
@@ -689,7 +707,7 @@ class EmailAgent:
         if interval_minutes is None:
             interval_minutes = self.config["screening"]["check_interval_minutes"]
         
-        logger.info(f"🚀 Starting continuous email screening (interval: {interval_minutes} minutes)")
+        logger.info(f"[INFO] Starting continuous email screening (interval: {interval_minutes} minutes)")
         logger.info("Press Ctrl+C to stop")
         
         try:
@@ -698,12 +716,12 @@ class EmailAgent:
                 
                 # Log summary
                 if summary["status"] == "completed":
-                    logger.info(f"⏰ Next check in {interval_minutes} minutes...")
+                    logger.info(f"[INFO] Next check in {interval_minutes} minutes...")
                 
                 # Wait for next check
                 time.sleep(interval_minutes * 60)
                 
         except KeyboardInterrupt:
-            logger.info("⏹️ Stopped by user")
+            logger.info("[INFO] Stopped by user")
         except Exception as e:
-            logger.error(f"❌ Error in continuous run: {e}")
+            logger.error(f"[ERROR] Error in continuous run: {e}")

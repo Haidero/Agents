@@ -8,12 +8,26 @@ import pandas as pd
 import os
 import json
 import re
-import pdfplumber
-from docx import Document
 from datetime import datetime
 import plotly.express as px
 import plotly.graph_objects as go
 from io import BytesIO
+
+# Import core screener
+# Import core screeners
+try:
+    from core.screener import RealisticResumeScreener
+    from core.llm_screener import LLMScreener
+except ImportError:
+    # If run from root, this works. If run from inside, might need path adjustment
+    import sys
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+    from core.screener import RealisticResumeScreener
+    # LLMScreener might fail if agents missing dependencies, handle gracefully
+    try:
+        from core.llm_screener import LLMScreener
+    except:
+        LLMScreener = None
 
 # Page configuration
 st.set_page_config(
@@ -62,195 +76,161 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-class ResumeScreenerWeb:
-    def __init__(self):
-        # Skill weights for different positions
-        self.skill_weights = {
-            "software_engineer": {"python": 10, "java": 9, "javascript": 8, "aws": 8, "docker": 7, "kubernetes": 7, "sql": 6},
-            "data_scientist": {"python": 10, "machine learning": 10, "tensorflow": 9, "pytorch": 9, "sql": 8, "aws": 7},
-            "devops": {"aws": 10, "docker": 10, "kubernetes": 10, "linux": 8, "git": 7, "python": 6},
-            "full_stack": {"python": 9, "javascript": 9, "react": 8, "node.js": 8, "aws": 7, "docker": 6}
-        }
-        
+class ResumeScreenerWebWrapper:
+    def __init__(self, mode="rule_based"):
+        self.mode = mode
+        if mode == "llm" and LLMScreener:
+            self.screener = LLMScreener()
+        else:
+            self.screener = RealisticResumeScreener()
         # Create necessary directories
         os.makedirs("./uploads", exist_ok=True)
         os.makedirs("./results", exist_ok=True)
     
     def parse_resume(self, file_bytes, filename):
         """Parse uploaded resume file"""
-        text = ""
+        # Save temporarily to parse
+        temp_path = os.path.join("./uploads", filename)
+        with open(temp_path, "wb") as f:
+            f.write(file_bytes)
         
-        if filename.endswith('.pdf'):
-            try:
-                with pdfplumber.open(BytesIO(file_bytes)) as pdf:
-                    for page in pdf.pages:
-                        text += page.extract_text() or ""
-            except:
-                text = "Could not read PDF"
-                
-        elif filename.endswith('.docx'):
-            try:
-                doc = Document(BytesIO(file_bytes))
-                text = "\n".join([para.text for para in doc.paragraphs])
-            except:
-                text = "Could not read DOCX"
-                
-        elif filename.endswith('.txt'):
-            try:
-                text = file_bytes.decode('utf-8', errors='ignore')
-            except:
-                text = "Could not read TXT"
+        text = self.screener.parse_resume(temp_path)
         
-        return text.strip()
+        # Clean up
+        try:
+            os.remove(temp_path)
+        except:
+            pass
+            
+        return text if text else "Could not read file"
     
     def analyze_resume(self, text, position):
-        """Analyze resume content"""
+        """Analyze resume content using core screener"""
         if not text:
             return {"error": "No text content"}
         
-        text_lower = text.lower()
-        
-        # Calculate score
-        score = self.calculate_score(text_lower, position)
-        
-        # Extract skills
-        skills = self.extract_skills(text_lower, position)
+        # Use the core screener logic
+        grade, skills = self.screener.grade_resume(text, position)
         
         # Extract experience
-        experience = self.extract_experience(text_lower)
+        experience = self.screener.extract_experience(text)
         
-        # Extract education level
-        education = self.extract_education(text_lower)
-        
+        # Determine education level (simple extraction)
+        text_lower = text.lower()
+        education = "Not specified"
+        if "phd" in text_lower or "doctorate" in text_lower:
+            education = "PhD"
+        elif "master" in text_lower or "ms" in text_lower:
+            education = "Master's"
+        elif "bachelor" in text_lower or "bs" in text_lower:
+            education = "Bachelor's"
+            
         # Create summary
-        summary = self.generate_summary(text)
+        words = text.split()
+        summary = " ".join(words[:150]) + "..." if len(words) > 150 else text
         
         return {
-            "score": score,
+            "score": grade,
             "skills": skills,
             "experience_years": experience,
             "education_level": education,
             "summary": summary,
-            "word_count": len(text.split()),
-            "skills_match": self.calculate_skills_match(skills, position)
+            "word_count": len(words),
+            "skills_match": self.screener.calculate_position_match(skills, position)
         }
     
-    def calculate_score(self, text, position):
-        """Calculate score based on position requirements"""
-        score = 50  # Base score
-        
-        # Position-specific scoring
-        if position in self.skill_weights:
-            required_skills = self.skill_weights[position]
+    def run_email_agent_process(self):
+        """Run the email agent as a subprocess"""
+        import subprocess
+        try:
+            # Command to run
+            cmd = ["python", "main.py", "email", "--llm"]
             
-            # Check for required skills
-            for skill, weight in required_skills.items():
-                if re.search(r'\b' + re.escape(skill) + r'\b', text):
-                    score += weight
-        
-        # Experience bonus
-        exp_match = re.search(r'(\d+)\s*years?\s*experience', text)
-        if exp_match:
-            years = int(exp_match.group(1))
-            score += min(years * 3, 20)  # Max 20 points for experience
-        
-        # Education bonus
-        if "phd" in text or "doctorate" in text:
-            score += 15
-        elif "master" in text or "ms" in text:
-            score += 10
-        elif "bachelor" in text or "bs" in text:
-            score += 5
-        
-        # Company reputation bonus
-        faang = ["google", "microsoft", "amazon", "facebook", "apple", "netflix"]
-        for company in faang:
-            if company in text:
-                score += 5
-                break
-        
-        return min(100, max(0, score))
-    
-    def extract_skills(self, text, position):
-        """Extract relevant skills from text"""
-        all_skills = {}
-        for pos_skills in self.skill_weights.values():
-            all_skills.update(pos_skills)
-        
-        found_skills = []
-        for skill in all_skills.keys():
-            if re.search(r'\b' + re.escape(skill) + r'\b', text):
-                found_skills.append(skill)
-        
-        # Return top 10 skills
-        return found_skills[:10]
-    
-    def extract_experience(self, text):
-        """Extract years of experience"""
-        exp_match = re.search(r'(\d+)\s*years?\s*experience', text)
-        if exp_match:
-            return int(exp_match.group(1))
-        
-        # Try to estimate from dates
-        year_pattern = r'(?:19|20)\d{2}'
-        years = re.findall(year_pattern, text)
-        if len(years) >= 2:
-            try:
-                years_numeric = [int(y) for y in years if 1900 <= int(y) <= 2024]
-                if years_numeric:
-                    exp_years = (max(years_numeric) - min(years_numeric)) / 10
-                    return min(20, max(0, exp_years))
-            except:
-                pass
-        
-        return 0
-    
-    def extract_education(self, text):
-        """Extract education level"""
-        if "phd" in text or "doctorate" in text:
-            return "PhD"
-        elif "master" in text or "ms" in text or "m.sc" in text:
-            return "Master's"
-        elif "bachelor" in text or "bs" in text or "b.tech" in text:
-            return "Bachelor's"
-        else:
-            return "Not specified"
-    
-    def generate_summary(self, text):
-        """Generate summary from text"""
-        sentences = re.split(r'(?<=[.!?])\s+', text)
-        if len(sentences) > 3:
-            summary = " ".join(sentences[:3])
-        else:
-            summary = text[:300]
-        
-        # Limit to 150 words
-        words = summary.split()
-        if len(words) > 150:
-            summary = " ".join(words[:150]) + "..."
-        
-        return summary
-    
-    def calculate_skills_match(self, skills, position):
-        """Calculate skills match percentage"""
-        if position not in self.skill_weights:
-            return 0
-        
-        required_skills = list(self.skill_weights[position].keys())
-        matched = [skill for skill in skills if skill in required_skills]
-        
-        if not required_skills:
-            return 0
-        
-        return round((len(matched) / len(required_skills)) * 100)
-
-# Initialize the screener
-screener = ResumeScreenerWeb()
+            # Run command
+            process = subprocess.run(
+                cmd, 
+                capture_output=True, 
+                text=True,
+                check=False
+            )
+            
+            return {
+                "success": process.returncode == 0,
+                "stdout": process.stdout,
+                "stderr": process.stderr,
+                "returncode": process.returncode
+            }
+        except Exception as e:
+            return {"success": False, "error": str(e)}
 
 # Sidebar
 with st.sidebar:
     st.image("https://img.icons8.com/color/96/000000/resume.png", width=100)
     st.title("📄 AI Resume Screener")
+    st.markdown("---")
+    
+    # Mode Selection
+    mode = st.radio("Screening Mode", ["Rule-Based (Fast)", "LLM Agent (Research)"])
+    use_llm = "LLM" in mode
+    
+    if use_llm and not LLMScreener:
+        st.error("LLM Agents not available. Missing dependencies?")
+        use_llm = False
+
+    wrapper = ResumeScreenerWebWrapper(mode="llm" if use_llm else "rule_based")
+    st.markdown("---")
+
+    # Email Agent Section
+    st.subheader("📧 Email Agent")
+    if st.button("Run Email Agent Now", type="primary"):
+        with st.spinner("Checking emails and processing resumes..."):
+            result = wrapper.run_email_agent_process()
+            
+            if result.get("success"):
+                st.success("Email Agent finished successfully!")
+                with st.expander("View Logs"):
+                    st.code(result.get("stdout"))
+            else:
+                st.error("Email Agent failed!")
+                if result.get("error"):
+                    st.error(result["error"])
+                with st.expander("Error Details"):
+                    st.code(result.get("stderr"))
+                    st.code(result.get("stdout"))
+    
+    # Display Latest Results
+    import glob
+    try:
+        results_files = glob.glob(os.path.join("./email_results", "*.json"))
+        if results_files:
+            latest_file = max(results_files, key=os.path.getctime)
+            
+            with open(latest_file, 'r') as f:
+                data = json.load(f)
+                
+            st.divider()
+            st.markdown("### 📊 Latest Email Stats")
+            st.caption(f"Last updated: {datetime.fromisoformat(data.get('screening_date', datetime.now().isoformat())).strftime('%H:%M %p')}")
+            
+            col_a, col_b = st.columns(2)
+            with col_a:
+                st.metric("Total", data.get("total_candidates", 0))
+                st.metric("Accepted", len([r for r in data.get("results", []) if r["screening_results"]["status"] == "Accepted"]))
+                
+            with col_b:
+                st.metric("Rejected", len([r for r in data.get("results", []) if r["screening_results"]["status"] == "Rejected"]))
+                st.metric("Needs Review", len([r for r in data.get("results", []) if r["screening_results"]["status"] == "Needs Review"]))
+            
+            if st.checkbox("Show Email Candidates"):
+                for r in data.get("results", []):
+                    status_icon = "✅" if r["screening_results"]["status"] == "Accepted" else "❌" if r["screening_results"]["status"] == "Rejected" else "⚠️"
+                    st.markdown(f"""
+                    **{status_icon} {r['email_data']['sender_name']}**  
+                    Score: {r['screening_results']['score']} | {r['resume_info']['target_position']}
+                    """)
+    except Exception as e:
+        st.error(f"Error loading results: {e}")
+    
     st.markdown("---")
     
     st.subheader("⚙️ Settings")
@@ -323,8 +303,8 @@ if uploaded_files:
         file_bytes = uploaded_file.read()
         
         # Parse and analyze
-        text = screener.parse_resume(file_bytes, uploaded_file.name)
-        analysis = screener.analyze_resume(text, position)
+        text = wrapper.parse_resume(file_bytes, uploaded_file.name)
+        analysis = wrapper.analyze_resume(text, position)
         
         # Add filename and text preview
         analysis["filename"] = uploaded_file.name
@@ -461,7 +441,7 @@ if uploaded_files:
                                 st.write("**Skills Analysis:**")
                                 skills_df = pd.DataFrame({
                                     "skill": row['skills'],
-                                    "weight": [screener.skill_weights[position].get(skill, 1) 
+                                    "weight": [wrapper.screener.skill_weights.get(skill, 1) 
                                              for skill in row['skills']]
                                 })
                                 if not skills_df.empty:
@@ -496,48 +476,54 @@ if uploaded_files:
                 mime="application/json"
             )
         
-        # Time savings calculation
-        st.markdown("## ⏱️ Time Savings Analysis")
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.markdown("""
-            <div class="highlight-box">
-                <h4>⏰ Manual Screening Time</h4>
-                <p>Average manual screening time per resume: <strong>15 minutes</strong></p>
-                <p>Total resumes: <strong>{}</strong></p>
-                <p>Estimated manual time: <strong>{:.1f} hours</strong></p>
-            </div>
-            """.format(len(df), len(df) * 0.25), unsafe_allow_html=True)
-        
-        with col2:
-            automated_time = (len(df) * 0.25) / 11  # 11x faster per paper
-            time_saved = (len(df) * 0.25) - automated_time
-            
-            st.markdown(f"""
-            <div class="highlight-box">
-                <h4>⚡ Automated Screening</h4>
-                <p>Automated screening time: <strong>{automated_time:.1f} hours</strong></p>
-                <p>Time saved: <strong>{time_saved:.1f} hours</strong></p>
-                <p>Efficiency: <strong>11× faster</strong> (per research paper)</p>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        # Research paper comparison
-        st.markdown("## 📚 Research Paper Comparison")
-        
-        comparison_data = {
-            "Metric": ["Sentence Classification F1", "Grade Accuracy (±5)", "Time Efficiency"],
-            "Paper Results": ["87.73%", "81.35%", "11× faster"],
-            "System Target": [">85%", ">80%", "10-12× faster"]
-        }
-        
-        comparison_df = pd.DataFrame(comparison_data)
-        st.table(comparison_df)
-        
 else:
-    # Demo mode - show sample data
-    st.markdown("## 🎮 Try the System")
+    # Check for email results
+    import glob
+    email_results_available = False
+    
+    try:
+        results_files = glob.glob(os.path.join("./email_results", "*.json"))
+        if results_files:
+            latest_file = max(results_files, key=os.path.getctime)
+            email_results_available = True
+            
+            with open(latest_file, 'r') as f:
+                data = json.load(f)
+                
+            st.markdown(f"## 📧 Latest Email Screening Results")
+            st.caption(f"From {latest_file} - Last updated: {datetime.fromisoformat(data.get('screening_date', datetime.now().isoformat())).strftime('%H:%M %p')}")
+            
+            # Metrics
+            m1, m2, m3, m4 = st.columns(4)
+            m1.metric("Total Emails", data.get("total_candidates", 0))
+            m2.metric("Accepted", len([r for r in data.get("results", []) if r["screening_results"]["status"] == "Accepted"]))
+            m3.metric("Needs Review", len([r for r in data.get("results", []) if r["screening_results"]["status"] == "Needs Review"]))
+            m4.metric("Rejected", len([r for r in data.get("results", []) if r["screening_results"]["status"] == "Rejected"]))
+            
+            # Convert to DataFrame for display
+            if data.get("results"):
+                email_rows = []
+                for r in data["results"]:
+                    email_rows.append({
+                        "Name": r["email_data"]["sender_name"],
+                        "Email": r["email_data"]["from"],
+                        "Subject": r["email_data"]["subject"],
+                        "Position": r["resume_info"]["target_position"],
+                        "Score": r["screening_results"]["score"],
+                        "Status": r["screening_results"]["status"],
+                        "Exp (Yrs)": r["screening_results"]["experience_years"]
+                    })
+                
+                st.dataframe(pd.DataFrame(email_rows))
+            else:
+                st.info("No resumes found in the last email check.")
+
+    except Exception as e:
+        st.error(f"Error loading email results: {e}")
+
+    # Fallback / Info section (always show below results or if no results)
+    st.markdown("---")
+    st.markdown("## 🎮 Try Manual Upload")
     
     col1, col2 = st.columns(2)
     
@@ -564,36 +550,3 @@ else:
             <p>by Chengguang Gan, Qinghao Zhang, Tatsunori Mori</p>
         </div>
         """, unsafe_allow_html=True)
-    
-    # Sample data for demo
-    st.markdown("## 📊 Sample Analysis Preview")
-    
-    sample_data = {
-        "Candidate": ["John Doe", "Jane Smith", "Bob Johnson"],
-        "Position": ["Senior SE", "Data Scientist", "DevOps Engineer"],
-        "Score": [88, 92, 85],
-        "Experience": [8, 5, 4],
-        "Skills Match": [85, 90, 88],
-        "Status": ["Recommended", "Top Match", "Qualified"]
-    }
-    
-    sample_df = pd.DataFrame(sample_data)
-    st.dataframe(sample_df, use_container_width=True)
-    
-    # Visualization preview
-    fig = px.bar(sample_df, x="Candidate", y="Score", 
-                 title="Sample Candidate Scores",
-                 color="Status",
-                 color_discrete_map={"Recommended": "#3B82F6", 
-                                   "Top Match": "#10B981", 
-                                   "Qualified": "#F59E0B"})
-    st.plotly_chart(fig, use_container_width=True)
-
-# Footer
-st.markdown("---")
-st.markdown("""
-<div style="text-align: center; color: #6B7280;">
-    <p>🤖 AI Resume Screening System | Based on research paper "Application of LLM Agents in Recruitment"</p>
-    <p>Implementing LLM Agent framework for automated resume screening with 11× efficiency improvement</p>
-</div>
-""", unsafe_allow_html=True)

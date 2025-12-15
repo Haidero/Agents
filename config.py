@@ -1,5 +1,5 @@
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Dict, Optional
 
 # Try to import torch, but handle if not installed
@@ -42,7 +42,7 @@ class ModelConfig:
 class AgentConfig:
     """Configuration for agents"""
     # Sentence classification categories (from paper)
-    categories: List[str] = [
+    categories: List[str] = field(default_factory=lambda: [
         "personal_information",
         "experience",
         "summary",
@@ -50,11 +50,11 @@ class AgentConfig:
         "qualification_certification",
         "skill",
         "objectives"
-    ]
+    ])
     
     # Privacy protection
     remove_personal_info: bool = True
-    sensitive_categories: List[str] = ["personal_information"]
+    sensitive_categories: List[str] = field(default_factory=lambda: ["personal_information"])
     
     # Grading settings
     max_grade: int = 100
@@ -62,7 +62,7 @@ class AgentConfig:
     
     # Decision making
     top_n_candidates: int = 10
-    decision_criteria: Dict = None
+    decision_criteria: Dict = field(default_factory=dict)
 
 @dataclass
 class DataConfig:
@@ -73,7 +73,7 @@ class DataConfig:
     cache_dir: str = "./data/cache"
     
     # File extensions to process
-    supported_extensions: List[str] = [".pdf", ".docx", ".txt", ".doc"]
+    supported_extensions: List[str] = field(default_factory=lambda: [".pdf", ".docx", ".txt", ".doc"])
 
 # Initialize configurations
 model_config = ModelConfig()
@@ -86,8 +86,8 @@ for dir_path in [data_config.input_dir, data_config.processed_dir,
     os.makedirs(dir_path, exist_ok=True)
 
 # Print status
-print(f"✅ Config loaded. Device: {model_config.device}, Precision: {model_config.precision}")
+print(f"[INFO] Config loaded. Device: {model_config.device}, Precision: {model_config.precision}")
 if model_config.device == "cuda":
-    print(f"   GPU detected: {torch.cuda.get_device_name(0)}")
+    print(f"   [INFO] GPU detected: {torch.cuda.get_device_name(0)}")
 else:
-    print("   Using CPU (no GPU detected)")
+    print("   [INFO] Using CPU (no GPU detected)")
