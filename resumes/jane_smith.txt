@@ -1,0 +1,24 @@
+Jane Smith - Data Scientist
+            
+            PROFILE:
+            Data Scientist with 5 years experience in machine learning.
+            
+            EXPERIENCE:
+            - Data Scientist at Facebook (2019-2024)
+              * Built ML models for recommendation systems
+              * Used TensorFlow and PyTorch
+              * Published research papers
+            
+            - Data Analyst at Amazon (2017-2019)
+              * Analyzed customer data
+              * Created dashboards and reports
+            
+            EDUCATION:
+            - PhD in Data Science, Harvard University
+            - MS in Statistics, University of Chicago
+            
+            SKILLS:
+            Python, R, TensorFlow, PyTorch, SQL, Machine Learning
+            
+            CERTIFICATIONS:
+            TensorFlow Developer Certificate

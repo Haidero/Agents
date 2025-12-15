@@ -1,0 +1,22 @@
+{
+  "email": {
+    "imap_server": "imap.gmail.com",
+    "imap_port": 993,
+    "smtp_server": "smtp.gmail.com",
+    "smtp_port": 587,
+    "username": "haiderjaan713@gmail.com",
+    "password": "qrme cfcs pyxc phfc",
+    "folder": "INBOX"
+  },
+  "screening": {
+    "target_position": "software_engineer",
+    "minimum_score": 70,
+    "check_interval_minutes": 5,
+    "automatic_response": true
+  },
+  "response_templates": {
+    "accepted": "Dear {candidate_name},\n\nThank you for applying to the {position} position.\n\nWe are impressed with your qualifications and would like to invite you for an interview.\n\nPlease reply to this email with your availability.\n\nBest regards,\nRecruitment Team",
+    "rejected": "Dear {candidate_name},\n\nThank you for your interest in the {position} position.\n\nAfter careful review, we have decided to proceed with other candidates.\n\nWe wish you the best in your job search.\n\nBest regards,\nRecruitment Team",
+    "needs_review": "Dear {candidate_name},\n\nThank you for applying to the {position} position.\n\nYour application is currently under review. We will contact you within 5-7 business days.\n\nBest regards,\nRecruitment Team"
+  }
+}
