@@ -127,3 +127,22 @@
 2025-12-15 18:32:09,253 - INFO - [INFO] Found 3 new emails
 2025-12-15 18:32:09,951 - INFO - [OK] Found 0 emails with resumes
 2025-12-15 18:32:09,951 - INFO - [INFO] No new resumes found
+2025-12-17 16:22:03,372 - INFO - [OK] Loaded config from email_config.json
+2025-12-17 16:22:03,375 - INFO - [INFO] Using injected screener: LLMScreener
+2025-12-17 16:22:03,376 - INFO - [INFO] Email Agent Initialized
+2025-12-17 16:22:03,376 - INFO - [INFO] Starting email screening cycle
+2025-12-17 16:22:05,918 - INFO - [OK] Connected to email server
+2025-12-17 16:22:06,331 - INFO - [INFO] Found 13 new emails
+2025-12-17 16:22:07,179 - INFO - [INFO] Processing email: Keep growing your referral earnings! from noreply@send.contributors.vecteezy.com
+2025-12-17 16:22:07,886 - INFO - [INFO] Processing email: Level up your docs with visuals from marketing@engage.canva.com
+2025-12-17 16:22:08,403 - INFO - [INFO] Processing email: Stai ancora cercando lavoro? from info@tutored.it
+2025-12-17 16:22:08,906 - INFO - [INFO] Processing email: Futures titan leaderboard—Week 3 is here! A new Christmas season begins, trade to share 750,000 USDT from notification@promo1.bitget.com
+2025-12-17 16:22:09,880 - INFO - [INFO] Processing email: mikel ziu has subscribed to you on YouTube! from noreply@youtube.com
+2025-12-17 16:22:11,401 - INFO - [INFO] Processing email: I want to upgrade my acount but the problem is that its want
+ verification of email which is already done but it ask again from complaints@easypaisa.com.pk
+2025-12-17 16:22:11,827 - INFO - [INFO] Processing email: I want to upgrade my acount but the problem is that its want
+ verification of email which is already done but it ask again from complaints@easypaisa.com.pk
+2025-12-17 16:22:12,524 - INFO - [INFO] Processing email: Receptionist ( Night Shift ) at Luxury inn Hotel and 28 more night shift jobs in Karachi for you! from alert@indeed.com
+2025-12-17 16:22:13,197 - INFO - [OK] Found 1 emails with resumes
+2025-12-17 16:22:13,198 - WARNING - [WARN] Email from alert@indeed.com has no attachments. Skipping.
+2025-12-17 16:22:13,198 - INFO - [INFO] No valid resumes processed

@@ -1,12 +1,22 @@
 version: '3.8'
 
 services:
-  # Container 1: Web Interface
+  # Container 1: Nginx (Reverse Proxy) - Entry Point
+  nginx:
+    build: ./nginx
+    container_name: resume_screener_nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - web_app
+    restart: unless-stopped
+
+  # Container 2: Web Interface
   web_app:
     build: .
     container_name: resume_screener_web
-    ports:
-      - "8501:8501"
+    expose:
+      - "8501" # Only exposed to other containers
     volumes:
       - .:/app
     command: streamlit run web_app.py --server.address=0.0.0.0
@@ -14,7 +24,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
 
-  # Container 2: Email Agent (Background Worker)
+  # Container 3: Email Agent (Background Worker)
   email_agent:
     build: .
     container_name: resume_screener_agent
