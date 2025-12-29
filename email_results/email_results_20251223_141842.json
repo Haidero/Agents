@@ -1,55 +1,55 @@
 {
-  "screening_date": "2025-12-15T17:58:47.112205",
+  "screening_date": "2025-12-23T14:18:42.869257",
   "total_candidates": 2,
   "results": [
     {
-      "candidate_id": "zafarshaheen789@gmail.com_20251215",
+      "candidate_id": "zafarshaheen789@gmail.com_20251223",
       "email_data": {
         "from": "zafarshaheen789@gmail.com",
-        "subject": "",
+        "subject": "Apply for Data scientist",
         "sender_name": "Zafar Iqbal"
       },
       "resume_info": {
-        "filename": "Touqeer CV.pdf",
-        "filepath": "./resumes\\20251215_175837_8090_Touqeer_CV.pdf",
+        "filename": "Atif Nasim - Resume.pdf",
+        "filepath": "./resumes\\20251223_141831_9080_Atif_Nasim_-_Resume.pdf",
         "target_position": "software_engineer"
       },
       "screening_results": {
-        "score": 82,
-        "status": "Accepted",
+        "score": 64,
+        "status": "Rejected",
         "skills": [],
         "experience_years": 0.0,
         "position_match": 0,
-        "screened_date": "2025-12-15T17:58:39.304382"
+        "screened_date": "2025-12-23T14:18:35.282396"
       },
       "response_info": {
-        "template": "accepted",
+        "template": "rejected",
         "sent": true,
         "scheduled": false
       }
     },
     {
-      "candidate_id": "zafarshaheen789@gmail.com_20251215",
+      "candidate_id": "zafarshaheen789@gmail.com_20251223",
       "email_data": {
         "from": "zafarshaheen789@gmail.com",
-        "subject": "Apply for job Data science",
+        "subject": "Apply for finance manager",
         "sender_name": "Zafar Iqbal"
       },
       "resume_info": {
-        "filename": "Sheeza Habib..pdf",
-        "filepath": "./resumes\\20251215_175838_8090_Sheeza_Habib..pdf",
+        "filename": "Syed Munsif Bukhari.pdf",
+        "filepath": "./resumes\\20251223_141833_9080_Syed_Munsif_Bukhari.pdf",
         "target_position": "software_engineer"
       },
       "screening_results": {
-        "score": 71,
-        "status": "Needs Review",
+        "score": 85,
+        "status": "Accepted",
         "skills": [],
         "experience_years": 0.0,
         "position_match": 0,
-        "screened_date": "2025-12-15T17:58:39.762853"
+        "screened_date": "2025-12-23T14:18:35.413811"
       },
       "response_info": {
-        "template": "needs_review",
+        "template": "accepted",
         "sent": true,
         "scheduled": false
       }

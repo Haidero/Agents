@@ -1,0 +1,89 @@
+{
+  "screening_date": "2025-12-22T16:13:59.528452",
+  "total_candidates": 3,
+  "results": [
+    {
+      "candidate_id": "zafarshaheen789@gmail.com_20251222",
+      "email_data": {
+        "from": "zafarshaheen789@gmail.com",
+        "subject": "Apply for HR",
+        "sender_name": "Zafar Iqbal"
+      },
+      "resume_info": {
+        "filename": "AQSA MAHAK.pdf",
+        "filepath": "./resumes\\20251222_161338_6545_AQSA_MAHAK.pdf",
+        "target_position": "software_engineer"
+      },
+      "screening_results": {
+        "score": 92,
+        "status": "Accepted",
+        "skills": [],
+        "experience_years": 0.0,
+        "position_match": 0,
+        "screened_date": "2025-12-22T16:13:47.524309"
+      },
+      "response_info": {
+        "template": "accepted",
+        "sent": true,
+        "scheduled": false
+      }
+    },
+    {
+      "candidate_id": "zeeshan.haidernagree@gmail.com_20251222",
+      "email_data": {
+        "from": "zeeshan.haidernagree@gmail.com",
+        "subject": "Apply for data scientist",
+        "sender_name": "Zeeshan Haider"
+      },
+      "resume_info": {
+        "filename": "Zeeshan haider Professional CV Resume.pdf",
+        "filepath": "./resumes\\20251222_161339_0629_Zeeshan_haider_Professional_CV_Resume.pdf",
+        "target_position": "software_engineer"
+      },
+      "screening_results": {
+        "score": 79,
+        "status": "Needs Review",
+        "skills": [
+          "python",
+          "javascript",
+          "machine learning",
+          "ai"
+        ],
+        "experience_years": 0.0,
+        "position_match": 50,
+        "screened_date": "2025-12-22T16:13:48.157719"
+      },
+      "response_info": {
+        "template": "needs_review",
+        "sent": true,
+        "scheduled": false
+      }
+    },
+    {
+      "candidate_id": "zeeshan.haidernagree@gmail.com_20251222",
+      "email_data": {
+        "from": "zeeshan.haidernagree@gmail.com",
+        "subject": "applying for the software enginer",
+        "sender_name": "Zeeshan Haider"
+      },
+      "resume_info": {
+        "filename": "CV_hussain pdf (1).pdf",
+        "filepath": "./resumes\\20251222_161340_0629_CV_hussain_pdf__1_.pdf",
+        "target_position": "software_engineer"
+      },
+      "screening_results": {
+        "score": 69,
+        "status": "Rejected",
+        "skills": [],
+        "experience_years": 0.0,
+        "position_match": 0,
+        "screened_date": "2025-12-22T16:13:48.360393"
+      },
+      "response_info": {
+        "template": "rejected",
+        "sent": true,
+        "scheduled": false
+      }
+    }
+  ]
+}

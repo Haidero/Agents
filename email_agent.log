@@ -1,148 +1,149 @@
-2025-12-15 17:58:30,804 - INFO - [OK] Loaded config from email_config.json
-2025-12-15 17:58:30,806 - INFO - [INFO] Using injected screener: LLMScreener
-2025-12-15 17:58:30,807 - INFO - [INFO] Email Agent Initialized
-2025-12-15 17:58:30,807 - INFO - [INFO] Starting email screening cycle
-2025-12-15 17:58:33,287 - INFO - [OK] Connected to email server
-2025-12-15 17:58:33,692 - INFO - [INFO] Found 7 new emails
-2025-12-15 17:58:34,107 - INFO - [INFO] Processing email: Login Attempt Failed from e.statement@telenorbank.pk
-2025-12-15 17:58:34,938 - INFO - [INFO] Processing email: HR internship at iTech Gemini and 19 more intern jobs in Rawalpindi for you! from alert@indeed.com
-2025-12-15 17:58:35,559 - INFO - [INFO] Processing email: Data Entry (Video Annotation) Night shift at ePlanet communications and 26 more night shift jobs in Karachi for you! from alert@indeed.com
-2025-12-15 17:58:37,839 - INFO - [INFO] Processing email:  from zafarshaheen789@gmail.com
-2025-12-15 17:58:37,848 - INFO - [INFO] Saved attachment: 20251215_175837_8090_Touqeer_CV.pdf
-2025-12-15 17:58:38,508 - INFO - [INFO] Processing email: Apply for job Data science from zafarshaheen789@gmail.com
-2025-12-15 17:58:38,511 - INFO - [INFO] Saved attachment: 20251215_175838_8090_Sheeza_Habib..pdf
-2025-12-15 17:58:39,124 - INFO - [OK] Found 4 emails with resumes
-2025-12-15 17:58:39,126 - WARNING - [WARN] Email from alert@indeed.com has no attachments. Skipping.
-2025-12-15 17:58:39,128 - WARNING - [WARN] Email from alert@indeed.com has no attachments. Skipping.
-2025-12-15 17:58:39,304 - INFO - [INFO] Screened: Zafar Iqbal - Score: 82/100 - Status: Accepted
-2025-12-15 17:58:39,323 - WARNING - Could get FontBBox from font descriptor because None cannot be parsed as 4 floats
-2025-12-15 17:58:39,329 - WARNING - Could get FontBBox from font descriptor because None cannot be parsed as 4 floats
-2025-12-15 17:58:39,332 - WARNING - Could get FontBBox from font descriptor because None cannot be parsed as 4 floats
-2025-12-15 17:58:39,338 - WARNING - Could get FontBBox from font descriptor because None cannot be parsed as 4 floats
-2025-12-15 17:58:39,347 - WARNING - Could get FontBBox from font descriptor because None cannot be parsed as 4 floats
-2025-12-15 17:58:39,706 - WARNING - Could get FontBBox from font descriptor because None cannot be parsed as 4 floats
-2025-12-15 17:58:39,708 - WARNING - Could get FontBBox from font descriptor because None cannot be parsed as 4 floats
-2025-12-15 17:58:39,712 - WARNING - Could get FontBBox from font descriptor because None cannot be parsed as 4 floats
-2025-12-15 17:58:39,719 - WARNING - Could get FontBBox from font descriptor because None cannot be parsed as 4 floats
-2025-12-15 17:58:39,762 - INFO - [INFO] Screened: Zafar Iqbal - Score: 71/100 - Status: Needs Review
-2025-12-15 17:58:43,828 - INFO - [INFO] Sent response to: zafarshaheen789@gmail.com
-2025-12-15 17:58:47,109 - INFO - [INFO] Sent response to: zafarshaheen789@gmail.com
-2025-12-15 17:58:47,132 - INFO - [INFO] Saved results: ./email_results\email_results_20251215_175847.json
-2025-12-15 17:58:47,134 - INFO - 
+2025-12-22 16:13:16,036 - INFO - [OK] Loaded config from email_config.json
+2025-12-22 16:13:16,037 - INFO - [INFO] Using injected screener: LLMScreener
+2025-12-22 16:13:16,038 - INFO - [INFO] Email Agent Initialized
+2025-12-22 16:13:16,038 - INFO - [INFO] Starting email screening cycle (looking back 7 days, re-scanning: False)
+2025-12-22 16:13:18,501 - INFO - [OK] Connected to email server
+2025-12-22 16:13:18,502 - INFO - [INFO] Searching emails since 15-Dec-2025
+2025-12-22 16:13:18,892 - INFO - [INFO] Found 90 emails in range
+2025-12-22 16:13:19,403 - INFO - [INFO] Processing email: mikel ziu has subscribed to you on YouTube! from noreply@youtube.com
+2025-12-22 16:13:20,470 - INFO - [INFO] Processing email: Bank Alfalah | Account Transaction Details | Ref: 622532598 from email.notification@bankalfalah.com
+2025-12-22 16:13:21,274 - INFO - [INFO] Processing email: Money Transfer via Raast Payment from e.statement@telenorbank.pk
+2025-12-22 16:13:22,294 - INFO - [INFO] Processing email: I want to upgrade my acount but the problem is that its want
+ verification of email which is already done but it ask again from complaints@easypaisa.com.pk
+2025-12-22 16:13:22,605 - INFO - [INFO] Processing email: I want to upgrade my acount but the problem is that its want
+ verification of email which is already done but it ask again from complaints@easypaisa.com.pk
+2025-12-22 16:13:23,421 - INFO - [INFO] Processing email: Receptionist ( Night Shift ) at Luxury inn Hotel and 28 more night shift jobs in Karachi for you! from alert@indeed.com
+2025-12-22 16:13:23,753 - INFO - [INFO] Processing email: Verify your email to create your Oracle Cloud account from noreply@verify.signup.us-ashburn-1.oci.oraclecloud.com
+2025-12-22 16:13:24,377 - INFO - [INFO] Processing email: Activate your Fly.io account from support@fly.io
+2025-12-22 16:13:24,784 - INFO - [INFO] Processing email: Verify your email from notifications@link.com
+2025-12-22 16:13:25,176 - INFO - [INFO] Processing email: Bank Alfalah | Account Transaction Details | Ref: 623190196 from email.notification@bankalfalah.com
+2025-12-22 16:13:25,577 - INFO - [INFO] Processing email: Daily Earnings Report from no-reply@stock.adobe.com
+2025-12-22 16:13:25,934 - INFO - [INFO] Processing email: haiderjaan713, catch up on moments you've missed from posts-recaps@mail.instagram.com
+2025-12-22 16:13:26,219 - INFO - [INFO] Processing email: Weekly YouTube Performance Summary - December 17, 2025 from haiderjaan713@gmail.com
+2025-12-22 16:13:27,266 - INFO - [INFO] Processing email: Follow Bitget on X & Win an iPhone 17 Pro! from notification@promo1.bitget.com
+2025-12-22 16:13:27,761 - INFO - [INFO] Processing email: Your step-by-step guide to selling worldwide from global-seller@email.alibaba.com
+2025-12-22 16:13:28,182 - INFO - [INFO] Processing email: Response times over Christmas from contributors@alamy-updates.com
+2025-12-22 16:13:28,640 - INFO - [INFO] Processing email: Try Comet and work 10x faster from team@mail.perplexity.ai
+2025-12-22 16:13:28,971 - INFO - [INFO] Processing email: NBP Fund Management Limited NAV 18-DEC-25 from no-reply@nbpfunds.net
+2025-12-22 16:13:29,355 - INFO - [INFO] Processing email: Weekly YouTube Performance Summary - December 18, 2025 from haiderjaan713@gmail.com
+2025-12-22 16:13:29,980 - INFO - [INFO] Processing email: Bank Alfalah | Account Transaction Details | Ref: 624817014 from email.notification@bankalfalah.com
+2025-12-22 16:13:30,861 - INFO - [INFO] Processing email: Looks like you uploaded an image recently from product@engage.canva.com
+2025-12-22 16:13:32,664 - INFO - [INFO] Processing email: New E-book: The Big Book of Holes from hi@blendersecrets.org
+2025-12-22 16:13:33,100 - INFO - [INFO] Processing email: Personal invite: make $10k/mo with YouTube in 2026 from bryan@subscribr.ai
+2025-12-22 16:13:33,616 - INFO - [INFO] Processing email: techno ploys deserves a growth boost this month from hello@send.vidiq.com
+2025-12-22 16:13:34,462 - INFO - [INFO] Processing email: Keep holiday sales going: 25% off + FREE winter designs from service@reply.spreadshop.com
+2025-12-22 16:13:34,837 - INFO - [INFO] Processing email: Manus Update: $100M ARR, $125M revenue run-rate from info@admin.manus.im
+2025-12-22 16:13:35,252 - INFO - [INFO] Processing email: haiderjaan713, see what's been happening on Instagram from posts-recap@mail.instagram.com
+2025-12-22 16:13:36,224 - INFO - [INFO] Processing email: Full Stack Intern at Fun Prime Technology and 21 more intern jobs in Rawalpindi for you! from alert@indeed.com
+2025-12-22 16:13:36,912 - INFO - [INFO] Processing email: Data & AI Engineering from boundlessnotions@substack.com
+2025-12-22 16:13:37,942 - INFO - [INFO] Processing email: After-Hours Support – 2nd Shift at Virtesys LLP and 19 more night shift jobs in Karachi for you! from alert@indeed.com
+2025-12-22 16:13:38,868 - INFO - [INFO] Processing email: Apply for HR from zafarshaheen789@gmail.com
+2025-12-22 16:13:38,877 - INFO - [INFO] Saved attachment: 20251222_161338_6545_AQSA_MAHAK.pdf
+2025-12-22 16:13:39,670 - INFO - [INFO] Processing email: Apply for data scientist from zeeshan.haidernagree@gmail.com
+2025-12-22 16:13:39,680 - INFO - [INFO] Saved attachment: 20251222_161339_0629_Zeeshan_haider_Professional_CV_Resume.pdf
+2025-12-22 16:13:40,487 - INFO - [INFO] Processing email: applying for the software enginer from zeeshan.haidernagree@gmail.com
+2025-12-22 16:13:40,491 - INFO - [INFO] Saved attachment: 20251222_161340_0629_CV_hussain_pdf__1_.pdf
+2025-12-22 16:13:40,904 - INFO - [INFO] Processing email: Weekly YouTube Performance Summary - Dec 21, 2025 from haiderjaan713@gmail.com
+2025-12-22 16:13:41,428 - INFO - [INFO] Processing email: graphic.hand.design, see zeeshanhaidernagree, bjpbhajanlal and more in your feed from follow-suggestions@mail.instagram.com
+2025-12-22 16:13:42,284 - INFO - [INFO] Processing email: Baylor Scott & White Health is hiring now. December 21, 2025 from alerts@ziprecruiter.com
+2025-12-22 16:13:43,592 - INFO - [INFO] Processing email: December Rewards for Members from kattechu@ucm.es
+2025-12-22 16:13:44,424 - INFO - [INFO] Processing email: Sales Executive – Radiopharmaceuticals (Nuclear Medicine) at Med Lab Services and 29 more jobs in Rawalpindi for you! from alert@indeed.com
+2025-12-22 16:13:45,341 - INFO - [INFO] Processing email: After-Hours Support – 2nd Shift at Virtesys LLP and 17 more night shift jobs in Karachi for you! from alert@indeed.com
+2025-12-22 16:13:46,418 - INFO - [INFO] Processing email: Full Stack Intern at Fun Prime Technology and 20 more intern jobs in Rawalpindi for you! from alert@indeed.com
+2025-12-22 16:13:47,017 - INFO - [OK] Found 19 emails with resumes
+2025-12-22 16:13:47,018 - WARNING - [WARN] Email from alert@indeed.com has no attachments. Skipping.
+2025-12-22 16:13:47,019 - WARNING - [WARN] Email from noreply@verify.signup.us-ashburn-1.oci.oraclecloud.com has no attachments. Skipping.
+2025-12-22 16:13:47,019 - WARNING - [WARN] Email from posts-recaps@mail.instagram.com has no attachments. Skipping.
+2025-12-22 16:13:47,020 - WARNING - [WARN] Email from contributors@alamy-updates.com has no attachments. Skipping.
+2025-12-22 16:13:47,022 - WARNING - [WARN] Email from product@engage.canva.com has no attachments. Skipping.
+2025-12-22 16:13:47,027 - WARNING - [WARN] Email from mail@ifttt.com has no attachments. Skipping.
+2025-12-22 16:13:47,027 - WARNING - [WARN] Email from service@reply.spreadshop.com has no attachments. Skipping.
+2025-12-22 16:13:47,028 - WARNING - [WARN] Email from posts-recap@mail.instagram.com has no attachments. Skipping.
+2025-12-22 16:13:47,028 - WARNING - [WARN] Email from alert@indeed.com has no attachments. Skipping.
+2025-12-22 16:13:47,031 - WARNING - [WARN] Email from boundlessnotions@substack.com has no attachments. Skipping.
+2025-12-22 16:13:47,032 - WARNING - [WARN] Email from alert@indeed.com has no attachments. Skipping.
+2025-12-22 16:13:47,524 - INFO - [INFO] Screened: Zafar Iqbal - Score: 92/100 - Status: Accepted
+2025-12-22 16:13:48,157 - INFO - [INFO] Screened: Zeeshan Haider - Score: 79/100 - Status: Needs Review
+2025-12-22 16:13:48,252 - WARNING - Cannot set gray non-stroke color because /'P1' is an invalid float value
+2025-12-22 16:13:48,360 - INFO - [INFO] Screened: Zeeshan Haider - Score: 69/100 - Status: Rejected
+2025-12-22 16:13:48,360 - WARNING - [WARN] Email from follow-suggestions@mail.instagram.com has no attachments. Skipping.
+2025-12-22 16:13:48,360 - WARNING - [WARN] Email from alerts@ziprecruiter.com has no attachments. Skipping.
+2025-12-22 16:13:48,361 - WARNING - [WARN] Email from alert@indeed.com has no attachments. Skipping.
+2025-12-22 16:13:48,361 - WARNING - [WARN] Email from alert@indeed.com has no attachments. Skipping.
+2025-12-22 16:13:48,361 - WARNING - [WARN] Email from alert@indeed.com has no attachments. Skipping.
+2025-12-22 16:13:52,313 - INFO - [INFO] Sent response to: zafarshaheen789@gmail.com
+2025-12-22 16:13:55,782 - INFO - [INFO] Sent response to: zeeshan.haidernagree@gmail.com
+2025-12-22 16:13:59,525 - INFO - [INFO] Sent response to: zeeshan.haidernagree@gmail.com
+2025-12-22 16:13:59,582 - INFO - [INFO] Saved results: ./email_results\email_results_20251222_161359.json
+2025-12-22 16:13:59,584 - INFO - 
         [OK] Screening Cycle Complete:
-           • Emails processed: 4
-           • Resumes screened: 2
+           • Emails processed: 19
+           • Resumes screened: 3
            • Accepted: 1
            • Needs Review: 1
-           • Rejected: 0
-           • Average Score: 76.5/100
-           • Responses Sent: 2
+           • Rejected: 1
+           • Average Score: 80.0/100
+           • Responses Sent: 3
         
-2025-12-15 18:14:16,085 - INFO - [OK] Loaded config from email_config.json
-2025-12-15 18:14:16,086 - INFO - [INFO] Using injected screener: LLMScreener
-2025-12-15 18:14:16,086 - INFO - [INFO] Email Agent Initialized
-2025-12-15 18:14:16,086 - INFO - [INFO] Starting email screening cycle
-2025-12-15 18:14:18,538 - INFO - [OK] Connected to email server
-2025-12-15 18:14:18,845 - INFO - [INFO] Found 3 new emails
-2025-12-15 18:14:19,368 - INFO - [INFO] Processing email: Login Attempt Failed from e.statement@telenorbank.pk
-2025-12-15 18:14:20,842 - INFO - [INFO] Processing email:  from zafarshaheen789@gmail.com
-2025-12-15 18:14:20,854 - INFO - [INFO] Saved attachment: 20251215_181420_2418_Noman_Sarwar-Resume.pdf
-2025-12-15 18:14:21,845 - INFO - [INFO] Processing email:  from zafarshaheen789@gmail.com
-2025-12-15 18:14:21,855 - INFO - [INFO] Saved attachment: 20251215_181421_2418_Noman_Sarwar-Resume.pdf
-2025-12-15 18:14:22,534 - INFO - [OK] Found 2 emails with resumes
-2025-12-15 18:14:22,858 - INFO - [INFO] Screened: Zafar Iqbal - Score: 83/100 - Status: Accepted
-2025-12-15 18:14:23,334 - INFO - [INFO] Screened: Zafar Iqbal - Score: 87/100 - Status: Accepted
-2025-12-15 18:14:28,069 - INFO - [INFO] Sent response to: zafarshaheen789@gmail.com
-2025-12-15 18:14:31,651 - INFO - [INFO] Sent response to: zafarshaheen789@gmail.com
-2025-12-15 18:14:31,681 - INFO - [INFO] Saved results: ./email_results\email_results_20251215_181431.json
-2025-12-15 18:14:31,682 - INFO - 
+2025-12-23 14:18:12,558 - INFO - [OK] Loaded config from email_config.json
+2025-12-23 14:18:12,561 - INFO - [INFO] Using injected screener: LLMScreener
+2025-12-23 14:18:12,561 - INFO - [INFO] Email Agent Initialized
+2025-12-23 14:18:12,561 - INFO - [INFO] Starting email screening cycle (looking back 7 days, re-scanning: False)
+2025-12-23 14:18:14,913 - INFO - [OK] Connected to email server
+2025-12-23 14:18:14,913 - INFO - [INFO] Searching emails since 16-Dec-2025
+2025-12-23 14:18:15,425 - INFO - [INFO] Found 83 emails in range
+2025-12-23 14:18:16,232 - INFO - [INFO] Processing email: Try Comet and work 10x faster from team@mail.perplexity.ai
+2025-12-23 14:18:16,535 - INFO - [INFO] Processing email: NBP Fund Management Limited NAV 18-DEC-25 from no-reply@nbpfunds.net
+2025-12-23 14:18:16,820 - INFO - [INFO] Processing email: Weekly YouTube Performance Summary - December 18, 2025 from haiderjaan713@gmail.com
+2025-12-23 14:18:17,264 - INFO - [INFO] Processing email: Bank Alfalah | Account Transaction Details | Ref: 624817014 from email.notification@bankalfalah.com
+2025-12-23 14:18:18,560 - INFO - [INFO] Processing email: New E-book: The Big Book of Holes from hi@blendersecrets.org
+2025-12-23 14:18:19,002 - INFO - [INFO] Processing email: Personal invite: make $10k/mo with YouTube in 2026 from bryan@subscribr.ai
+2025-12-23 14:18:19,485 - INFO - [INFO] Processing email: techno ploys deserves a growth boost this month from hello@send.vidiq.com
+2025-12-23 14:18:20,252 - INFO - [INFO] Processing email: Manus Update: $100M ARR, $125M revenue run-rate from info@admin.manus.im
+2025-12-23 14:18:21,307 - INFO - [INFO] Processing email: Weekly YouTube Performance Summary - Dec 21, 2025 from haiderjaan713@gmail.com
+2025-12-23 14:18:21,639 - INFO - [INFO] Processing email: December Rewards for Members from kattechu@ucm.es
+2025-12-23 14:18:22,692 - INFO - [INFO] Processing email: Winter Bonanza: Futures Rush Is Live - Trade now and unlock rewards from notification@promo.bitget.com
+2025-12-23 14:18:23,596 - INFO - [INFO] Processing email: Udemy’s Exciting Next Chapter from hello@students.udemy.com
+2025-12-23 14:18:24,063 - INFO - [INFO] Processing email: Zeeshan, I think this job might be right for you! from phil@ziprecruiter.com
+2025-12-23 14:18:25,023 - INFO - [INFO] Processing email: New Year, New Zeeshan? from bryan@subscribr.ai
+2025-12-23 14:18:25,652 - INFO - [INFO] Processing email: ASO Marketing Intern at Funprime technologies Pvt Ltd and 16 more developer jobs in Rawalpindi for you! from alert@indeed.com
+2025-12-23 14:18:26,079 - INFO - [INFO] Processing email: NBP Fund Management Limited NAV 22-DEC-25 from no-reply@nbpfunds.net
+2025-12-23 14:18:26,465 - INFO - [INFO] Processing email: Weekly YouTube Performance Summary - December 22, 2025 from haiderjaan713@gmail.com
+2025-12-23 14:18:26,911 - INFO - [INFO] Processing email:  Season’s Greetings from the University of London from no-reply@m.mail.coursera.org
+2025-12-23 14:18:27,707 - INFO - [INFO] Processing email: The Monthly Build - Google Developer Program - December 2025 from googledev-noreply@google.com
+2025-12-23 14:18:28,361 - INFO - [INFO] Processing email: Allstate has a Applied Machine Learning Engineer Expert opening now from alerts@ziprecruiter.com
+2025-12-23 14:18:28,896 - INFO - [INFO] Processing email: UI/UX Intern at Cplus Soft (Pvt) Ltd and 11 more intern jobs in Rawalpindi for you! from alert@indeed.com
+2025-12-23 14:18:29,827 - INFO - [INFO] Processing email: Start something with Canva Design Trends from marketing@engage.canva.com
+2025-12-23 14:18:31,642 - INFO - [INFO] Processing email: Apply for Data scientist from zafarshaheen789@gmail.com
+2025-12-23 14:18:31,649 - INFO - [INFO] Saved attachment: 20251223_141831_9080_Atif_Nasim_-_Resume.pdf
+2025-12-23 14:18:33,668 - INFO - [INFO] Processing email: Apply for finance manager from zafarshaheen789@gmail.com
+2025-12-23 14:18:33,685 - INFO - [INFO] Saved attachment: 20251223_141833_9080_Syed_Munsif_Bukhari.pdf
+2025-12-23 14:18:34,227 - INFO - [OK] Found 11 emails with resumes
+2025-12-23 14:18:34,227 - WARNING - [WARN] Email from hello@students.udemy.com has no attachments. Skipping.
+2025-12-23 14:18:34,227 - WARNING - [WARN] Email from phil@ziprecruiter.com has no attachments. Skipping.
+2025-12-23 14:18:34,228 - WARNING - [WARN] Email from alert@indeed.com has no attachments. Skipping.
+2025-12-23 14:18:34,228 - WARNING - [WARN] Email from no-reply@m.mail.coursera.org has no attachments. Skipping.
+2025-12-23 14:18:34,228 - WARNING - [WARN] Email from googledev-noreply@google.com has no attachments. Skipping.
+2025-12-23 14:18:34,228 - WARNING - [WARN] Email from alerts@ziprecruiter.com has no attachments. Skipping.
+2025-12-23 14:18:34,228 - WARNING - [WARN] Email from alert@indeed.com has no attachments. Skipping.
+2025-12-23 14:18:34,228 - WARNING - [WARN] Email from marketing@engage.canva.com has no attachments. Skipping.
+2025-12-23 14:18:34,229 - WARNING - [WARN] Email from samson@delightfuldesignstudio.com has no attachments. Skipping.
+2025-12-23 14:18:35,282 - INFO - [INFO] Screened: Zafar Iqbal - Score: 64/100 - Status: Rejected
+2025-12-23 14:18:35,298 - WARNING - Cannot set gray non-stroke color because /'P14' is an invalid float value
+2025-12-23 14:18:35,301 - WARNING - Cannot set gray non-stroke color because /'P22' is an invalid float value
+2025-12-23 14:18:35,302 - WARNING - Cannot set gray non-stroke color because /'P26' is an invalid float value
+2025-12-23 14:18:35,304 - WARNING - Cannot set gray non-stroke color because /'P30' is an invalid float value
+2025-12-23 14:18:35,413 - INFO - [INFO] Screened: Zafar Iqbal - Score: 85/100 - Status: Accepted
+2025-12-23 14:18:38,981 - INFO - [INFO] Sent response to: zafarshaheen789@gmail.com
+2025-12-23 14:18:42,868 - INFO - [INFO] Sent response to: zafarshaheen789@gmail.com
+2025-12-23 14:18:42,897 - INFO - [INFO] Saved results: ./email_results\email_results_20251223_141842.json
+2025-12-23 14:18:42,898 - INFO - 
         [OK] Screening Cycle Complete:
-           • Emails processed: 2
+           • Emails processed: 11
            • Resumes screened: 2
-           • Accepted: 2
+           • Accepted: 1
            • Needs Review: 0
-           • Rejected: 0
-           • Average Score: 85.0/100
+           • Rejected: 1
+           • Average Score: 74.5/100
            • Responses Sent: 2
         
-2025-12-15 18:17:38,308 - INFO - [OK] Loaded config from email_config.json
-2025-12-15 18:17:38,309 - INFO - [INFO] Using injected screener: LLMScreener
-2025-12-15 18:17:38,309 - INFO - [INFO] Email Agent Initialized
-2025-12-15 18:17:38,310 - INFO - [INFO] Starting email screening cycle
-2025-12-15 18:17:41,000 - INFO - [OK] Connected to email server
-2025-12-15 18:17:41,393 - INFO - [INFO] Found 0 new emails
-2025-12-15 18:17:42,016 - INFO - [OK] Found 0 emails with resumes
-2025-12-15 18:17:42,017 - INFO - [INFO] No new resumes found
-2025-12-15 18:22:17,452 - INFO - [OK] Loaded config from email_config.json
-2025-12-15 18:22:17,455 - INFO - [INFO] Using injected screener: LLMScreener
-2025-12-15 18:22:17,456 - INFO - [INFO] Email Agent Initialized
-2025-12-15 18:22:17,456 - INFO - [INFO] Starting email screening cycle
-2025-12-15 18:22:20,026 - INFO - [OK] Connected to email server
-2025-12-15 18:22:20,330 - INFO - [INFO] Found 3 new emails
-2025-12-15 18:22:20,946 - INFO - [OK] Found 0 emails with resumes
-2025-12-15 18:22:20,947 - INFO - [INFO] No new resumes found
-2025-12-15 18:24:29,296 - INFO - [OK] Loaded config from email_config.json
-2025-12-15 18:24:29,298 - INFO - [INFO] Using injected screener: LLMScreener
-2025-12-15 18:24:29,298 - INFO - [INFO] Email Agent Initialized
-2025-12-15 18:24:29,298 - INFO - [INFO] Starting email screening cycle
-2025-12-15 18:24:31,524 - INFO - [OK] Connected to email server
-2025-12-15 18:24:31,914 - INFO - [INFO] Found 3 new emails
-2025-12-15 18:24:32,533 - INFO - [OK] Found 0 emails with resumes
-2025-12-15 18:24:32,534 - INFO - [INFO] No new resumes found
-2025-12-15 18:25:28,802 - INFO - [OK] Loaded config from email_config.json
-2025-12-15 18:25:28,803 - INFO - [INFO] Using injected screener: LLMScreener
-2025-12-15 18:25:28,803 - INFO - [INFO] Email Agent Initialized
-2025-12-15 18:25:28,804 - INFO - [INFO] Starting email screening cycle
-2025-12-15 18:25:30,999 - INFO - [OK] Connected to email server
-2025-12-15 18:25:31,306 - INFO - [INFO] Found 3 new emails
-2025-12-15 18:25:31,922 - INFO - [OK] Found 0 emails with resumes
-2025-12-15 18:25:31,922 - INFO - [INFO] No new resumes found
-2025-12-15 18:30:45,000 - INFO - [OK] Loaded config from email_config.json
-2025-12-15 18:30:45,002 - INFO - [INFO] Using injected screener: LLMScreener
-2025-12-15 18:30:45,002 - INFO - [INFO] Email Agent Initialized
-2025-12-15 18:30:45,002 - INFO - [INFO] Starting email screening cycle
-2025-12-15 18:30:46,814 - INFO - [OK] Connected to email server
-2025-12-15 18:30:47,108 - INFO - [INFO] Found 4 new emails
-2025-12-15 18:30:48,578 - INFO - [INFO] Processing email:  from zafarshaheen789@gmail.com
-2025-12-15 18:30:48,583 - INFO - [INFO] Saved attachment: 20251215_183048_5341_Noman_Sarwar-Resume.pdf
-2025-12-15 18:30:49,264 - INFO - [OK] Found 1 emails with resumes
-2025-12-15 18:30:49,603 - INFO - [INFO] Screened: Zafar Iqbal - Score: 75/100 - Status: Needs Review
-2025-12-15 18:30:53,356 - INFO - [INFO] Sent response to: zafarshaheen789@gmail.com
-2025-12-15 18:30:53,367 - INFO - [INFO] Saved results: ./email_results\email_results_20251215_183053.json
-2025-12-15 18:30:53,367 - INFO - 
-        [OK] Screening Cycle Complete:
-           • Emails processed: 1
-           • Resumes screened: 1
-           • Accepted: 0
-           • Needs Review: 1
-           • Rejected: 0
-           • Average Score: 75.0/100
-           • Responses Sent: 1
-        
-2025-12-15 18:32:07,059 - INFO - [OK] Loaded config from email_config.json
-2025-12-15 18:32:07,062 - INFO - [INFO] Using injected screener: LLMScreener
-2025-12-15 18:32:07,062 - INFO - [INFO] Email Agent Initialized
-2025-12-15 18:32:07,062 - INFO - [INFO] Starting email screening cycle
-2025-12-15 18:32:08,944 - INFO - [OK] Connected to email server
-2025-12-15 18:32:09,253 - INFO - [INFO] Found 3 new emails
-2025-12-15 18:32:09,951 - INFO - [OK] Found 0 emails with resumes
-2025-12-15 18:32:09,951 - INFO - [INFO] No new resumes found
-2025-12-17 16:22:03,372 - INFO - [OK] Loaded config from email_config.json
-2025-12-17 16:22:03,375 - INFO - [INFO] Using injected screener: LLMScreener
-2025-12-17 16:22:03,376 - INFO - [INFO] Email Agent Initialized
-2025-12-17 16:22:03,376 - INFO - [INFO] Starting email screening cycle
-2025-12-17 16:22:05,918 - INFO - [OK] Connected to email server
-2025-12-17 16:22:06,331 - INFO - [INFO] Found 13 new emails
-2025-12-17 16:22:07,179 - INFO - [INFO] Processing email: Keep growing your referral earnings! from noreply@send.contributors.vecteezy.com
-2025-12-17 16:22:07,886 - INFO - [INFO] Processing email: Level up your docs with visuals from marketing@engage.canva.com
-2025-12-17 16:22:08,403 - INFO - [INFO] Processing email: Stai ancora cercando lavoro? from info@tutored.it
-2025-12-17 16:22:08,906 - INFO - [INFO] Processing email: Futures titan leaderboard—Week 3 is here! A new Christmas season begins, trade to share 750,000 USDT from notification@promo1.bitget.com
-2025-12-17 16:22:09,880 - INFO - [INFO] Processing email: mikel ziu has subscribed to you on YouTube! from noreply@youtube.com
-2025-12-17 16:22:11,401 - INFO - [INFO] Processing email: I want to upgrade my acount but the problem is that its want
- verification of email which is already done but it ask again from complaints@easypaisa.com.pk
-2025-12-17 16:22:11,827 - INFO - [INFO] Processing email: I want to upgrade my acount but the problem is that its want
- verification of email which is already done but it ask again from complaints@easypaisa.com.pk
-2025-12-17 16:22:12,524 - INFO - [INFO] Processing email: Receptionist ( Night Shift ) at Luxury inn Hotel and 28 more night shift jobs in Karachi for you! from alert@indeed.com
-2025-12-17 16:22:13,197 - INFO - [OK] Found 1 emails with resumes
-2025-12-17 16:22:13,198 - WARNING - [WARN] Email from alert@indeed.com has no attachments. Skipping.
-2025-12-17 16:22:13,198 - INFO - [INFO] No valid resumes processed

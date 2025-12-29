@@ -48,17 +48,18 @@ def run_email_agent(args):
     print(f"   Mode: {'Continuous' if args.continuous else 'Run Once'}")
     
     if args.llm:
-         print("[LLM] Using LLM Agents for Email Screening...")
+         print(f"[LLM] Using LLM Agents for Email Screening (Position: {args.position})...")
          from core.llm_screener import LLMScreener
          screener = LLMScreener(use_gpu=args.gpu)
-         agent = EmailAgent(screener=screener)
+         agent = EmailAgent(screener=screener, target_position=args.position)
     else:
-         agent = EmailAgent()
+         print(f"[RULE-BASED] Starting Email Screening (Position: {args.position})...")
+         agent = EmailAgent(target_position=args.position)
     
     if args.continuous:
         agent.run_continuously(interval_minutes=args.interval)
     else:
-        agent.run_once()
+        agent.run_once(days_back=args.days, ignore_processed=args.force_rescan)
 
 def main():
     parser = argparse.ArgumentParser(description="AI Resume Screening System")
@@ -78,6 +79,9 @@ def main():
     email_parser = subparsers.add_parser("email", help="Run Email Agent")
     email_parser.add_argument("--continuous", action="store_true", help="Run continuously")
     email_parser.add_argument("--interval", type=int, default=5, help="Interval in minutes")
+    email_parser.add_argument("--days", type=int, default=7, help="Days to look back for emails")
+    email_parser.add_argument("--position", default="software_engineer", help="Target position")
+    email_parser.add_argument("--force-rescan", action="store_true", help="Process already processed emails")
     email_parser.add_argument("--llm", action="store_true", help="Use LLM Agents")
     email_parser.add_argument("--gpu", action="store_true", help="Force GPU usage for local models")
     

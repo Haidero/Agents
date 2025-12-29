@@ -101,15 +101,12 @@ class LLMScreener:
             classification_result = self.classifier.process_resume(resume_dict)
             
             # Stage 3: Grading & Summarization
+            # Stage 3: Grading & Summarization
             logger.info("  3️⃣ Grading & Summarizing...")
             filtered_text = classification_result["filtered_text"]
             
-            # Provide context about target position to grading agent?
-            # The current HRGraderAgent prompt is generic "software engineering".
-            # We might want to construct a prompt that includes the target position.
-            # But the agent's _create_hr_prompt seems hardcoded for now.
-            # We'll pass the text.
-            grading_result = self.grader.grade_and_summarize(filtered_text)
+            # Pass target position to grader for context-aware grading
+            grading_result = self.grader.grade_and_summarize(filtered_text, target_position)
             
             # Stage 4: Calculate additional metrics (Skill match, experience)
             # This logic was in the rule-based screener, let's reuse/re-implement some of it
@@ -143,6 +140,7 @@ class LLMScreener:
                 # Flattened fields for easy access by EmailAgent/UI
                 "score": grading_result["grade"] or 0,
                 "summary": grading_result["summary"] or "",
+                "details": grading_result.get("details", {}),
                 "skills": skills_found,
                 "years_experience": years_exp,
                 "position_match": position_match,
@@ -238,7 +236,7 @@ class LLMScreener:
         # We can bypass parser/classifier if we just have text, or wrap it.
         
         # Grading stage
-        grading_result = self.grader.grade_and_summarize(text)
+        grading_result = self.grader.grade_and_summarize(text, target_position)
         grade = grading_result.get("grade", 0) or 0
         
         # Skill extraction

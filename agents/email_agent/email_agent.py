@@ -34,15 +34,22 @@ logger = logging.getLogger(__name__)
 class EmailAgent:
     """Email agent that checks, downloads, and processes resumes"""
     
-    def __init__(self, config_file: str = "email_config.json", screener: Optional[Any] = None):
+    def __init__(self, config_file: str = "email_config.json", screener: Optional[Any] = None, target_position: str = None):
         """
         Initialize email agent with configuration
         
         Args:
             config_file: Path to email configuration file
-            screener: Optional Screener instance (RealisticResumeScreener or LLMScreener)
+            screener: Optional Screener instance
+            target_position: Optional override for target position
         """
         self.config = self.load_config(config_file)
+        
+        # Override position if provided
+        if target_position:
+            self.config["screening"]["target_position"] = target_position
+            
+        self.processed_emails_file = "processed_emails.json"
         self.processed_emails_file = "processed_emails.json"
         self.processed_emails = self.load_processed_emails()
         
@@ -182,7 +189,16 @@ class EmailAgent:
             logger.error(f"[ERROR] Failed to connect to email: {e}")
             return None
     
-    def check_for_new_resumes(self) -> List[Dict]:
+    def get_imap_date(self, days_back: int) -> str:
+        """Get date string for IMAP search (DD-Mon-YYYY) ensuring English months"""
+        date = datetime.now() - timedelta(days=days_back)
+        months = {
+            1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr", 5: "May", 6: "Jun",
+            7: "Jul", 8: "Aug", 9: "Sep", 10: "Oct", 11: "Nov", 12: "Dec"
+        }
+        return f"{date.day}-{months[date.month]}-{date.year}"
+
+    def check_for_new_resumes(self, days_back: int = 7, ignore_processed: bool = False) -> List[Dict]:
         """
         Check email for new resumes
         Returns list of dictionaries with email info and attachments
@@ -194,11 +210,15 @@ class EmailAgent:
         new_resumes = []
         
         try:
-            # Search for unread emails with attachments
-            # Search criteria: UNSEEN emails from last 7 days
-            date_threshold = (datetime.now() - timedelta(days=7)).strftime("%d-%b-%Y")
-            search_criteria = f'(UNSEEN SINCE "{date_threshold}")'
+            # Search for emails with attachments
+            # Search criteria: Emails from last N days
+            date_string = self.get_imap_date(days_back)
             
+            # Using SINCE to get all emails from that date, not just UNSEEN
+            # This allows finding resumes even if emails were read
+            search_criteria = f'(SINCE "{date_string}")'
+            
+            logger.info(f"[INFO] Searching emails since {date_string}")
             status, messages = mail.search(None, search_criteria)
             
             if status != 'OK':
@@ -206,13 +226,13 @@ class EmailAgent:
                 return []
             
             email_ids = messages[0].split()
-            logger.info(f"[INFO] Found {len(email_ids)} new emails")
+            logger.info(f"[INFO] Found {len(email_ids)} emails in range")
             
-            for email_id in email_ids[:50]:  # Process max 50 at a time
+            for email_id in email_ids[-50:]:  # Process last 50 emails (newest first usually)
                 email_id_str = email_id.decode()
                 
-                # Skip if already processed
-                if email_id_str in self.processed_emails:
+                # Skip if already processed, unless forced
+                if not ignore_processed and email_id_str in self.processed_emails:
                     continue
                 
                 # Fetch the email
@@ -635,7 +655,7 @@ class EmailAgent:
         
         logger.info(f"[INFO] Saved results: {json_file}")
     
-    def run_once(self, send_responses: bool = True) -> Dict:
+    def run_once(self, send_responses: bool = True, days_back: int = 7, ignore_processed: bool = False) -> Dict:
         """
         Run one complete cycle:
         1. Check email for new resumes
@@ -644,10 +664,10 @@ class EmailAgent:
         
         Returns summary of the run
         """
-        logger.info("[INFO] Starting email screening cycle")
+        logger.info(f"[INFO] Starting email screening cycle (looking back {days_back} days, re-scanning: {ignore_processed})")
         
         # Step 1: Check for new resumes
-        new_resumes = self.check_for_new_resumes()
+        new_resumes = self.check_for_new_resumes(days_back=days_back, ignore_processed=ignore_processed)
         
         if not new_resumes:
             logger.info("[INFO] No new resumes found")

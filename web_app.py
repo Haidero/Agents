@@ -139,12 +139,14 @@ class ResumeScreenerWebWrapper:
             "skills_match": self.screener.calculate_position_match(skills, position)
         }
     
-    def run_email_agent_process(self):
+    def run_email_agent_process(self, days=7, position="software_engineer", force_rescan=False):
         """Run the email agent as a subprocess"""
         import subprocess
         try:
             # Command to run
-            cmd = ["python", "main.py", "email", "--llm"]
+            cmd = ["python", "main.py", "email", "--llm", "--days", str(days), "--position", position]
+            if force_rescan:
+                cmd.append("--force-rescan")
             
             # Run command
             process = subprocess.run(
@@ -177,14 +179,41 @@ with st.sidebar:
         st.error("LLM Agents not available. Missing dependencies?")
         use_llm = False
 
+    # Position Selection (Global)
+    st.subheader("⚙️ Global Settings")
+    position = st.selectbox(
+        "Select Position Type:",
+        ["software_engineer", "data_scientist", "devops", "full_stack"],
+        format_func=lambda x: x.replace("_", " ").title()
+    )
+    
+    st.markdown("---")
+
     wrapper = ResumeScreenerWebWrapper(mode="llm" if use_llm else "rule_based")
     st.markdown("---")
 
     # Email Agent Section
     st.subheader("📧 Email Agent")
+    
+    # Date Range Selection
+    date_range = st.selectbox(
+        "Scan Period",
+        ["Last 24 Hours", "Last 3 Days", "Last 1 Week", "Last 1 Month"],
+        index=2
+    )
+    
+    days_map = {
+        "Last 24 Hours": 1,
+        "Last 3 Days": 3,
+        "Last 1 Week": 7,
+        "Last 1 Month": 30
+    }
+    
+    force_rescan = st.checkbox("Force Rescan (Ignore processed)", value=False)
+    
     if st.button("Run Email Agent Now", type="primary"):
-        with st.spinner("Checking emails and processing resumes..."):
-            result = wrapper.run_email_agent_process()
+        with st.spinner(f"Checking emails from {date_range} for {position.replace('_', ' ').title()}..."):
+            result = wrapper.run_email_agent_process(days=days_map[date_range], position=position, force_rescan=force_rescan)
             
             if result.get("success"):
                 st.success("Email Agent finished successfully!")
@@ -198,49 +227,63 @@ with st.sidebar:
                     st.code(result.get("stderr"))
                     st.code(result.get("stdout"))
     
-    # Display Latest Results
+    # Display Results (Aggregated)
     import glob
     try:
         results_files = glob.glob(os.path.join("./email_results", "*.json"))
         if results_files:
-            latest_file = max(results_files, key=os.path.getctime)
+            all_results = []
             
-            with open(latest_file, 'r') as f:
-                data = json.load(f)
+            # Load all files
+            for file in results_files:
+                with open(file, 'r') as f:
+                    data = json.load(f)
+                    if data.get("results"):
+                        for r in data["results"]:
+                            # Add date from file if not in result
+                            if "screening_date" not in r:
+                                r["screening_date"] = data.get("screening_date")
+                            all_results.append(r)
+            
+            # Deduplicate by Candidate ID
+            unique_results = {}
+            for r in all_results:
+                # Use email + position as key if candidate_id missing
+                key = r.get("candidate_id", f"{r['email_data']['from']}_{r['resume_info']['target_position']}")
+                # Updating ensures we get the latest version if duplicates exist
+                unique_results[key] = r
+            
+            final_results = list(unique_results.values())
+            
+            # Sort by date
+            final_results.sort(key=lambda x: x.get("screening_results", {}).get("screened_date", ""), reverse=True)
+            
+            if final_results:
+                st.divider()
+                st.markdown(f"### 📊 Email Stats (All Time)")
                 
-            st.divider()
-            st.markdown("### 📊 Latest Email Stats")
-            st.caption(f"Last updated: {datetime.fromisoformat(data.get('screening_date', datetime.now().isoformat())).strftime('%H:%M %p')}")
-            
-            col_a, col_b = st.columns(2)
-            with col_a:
-                st.metric("Total", data.get("total_candidates", 0))
-                st.metric("Accepted", len([r for r in data.get("results", []) if r["screening_results"]["status"] == "Accepted"]))
+                col_a, col_b = st.columns(2)
+                with col_a:
+                    st.metric("Total Candidates", len(final_results))
+                    st.metric("Accepted", len([r for r in final_results if r["screening_results"]["status"] == "Accepted"]))
+                    
+                with col_b:
+                    st.metric("Rejected", len([r for r in final_results if r["screening_results"]["status"] == "Rejected"]))
+                    st.metric("Needs Review", len([r for r in final_results if r["screening_results"]["status"] == "Needs Review"]))
                 
-            with col_b:
-                st.metric("Rejected", len([r for r in data.get("results", []) if r["screening_results"]["status"] == "Rejected"]))
-                st.metric("Needs Review", len([r for r in data.get("results", []) if r["screening_results"]["status"] == "Needs Review"]))
-            
-            if st.checkbox("Show Email Candidates"):
-                for r in data.get("results", []):
-                    status_icon = "✅" if r["screening_results"]["status"] == "Accepted" else "❌" if r["screening_results"]["status"] == "Rejected" else "⚠️"
-                    st.markdown(f"""
-                    **{status_icon} {r['email_data']['sender_name']}**  
-                    Score: {r['screening_results']['score']} | {r['resume_info']['target_position']}
-                    """)
+                if st.checkbox("Show Recent Email Activity", value=True):
+                    for r in final_results[:5]:
+                        status_icon = "✅" if r["screening_results"]["status"] == "Accepted" else "❌" if r["screening_results"]["status"] == "Rejected" else "⚠️"
+                        st.markdown(f"""
+                        **{status_icon} {r['email_data']['sender_name']}**  
+                        {r['resume_info']['target_position']} | Score: {r['screening_results']['score']}
+                        """)
     except Exception as e:
         st.error(f"Error loading results: {e}")
     
     st.markdown("---")
     
-    st.subheader("⚙️ Settings")
-    
-    # Position selection
-    position = st.selectbox(
-        "Select Position Type:",
-        ["software_engineer", "data_scientist", "devops", "full_stack"],
-        format_func=lambda x: x.replace("_", " ").title()
-    )
+    # File upload
     
     # File upload
     st.subheader("📤 Upload Resumes")
@@ -355,7 +398,7 @@ if uploaded_files:
                               title="Score Distribution Across Candidates",
                               labels={"score": "Score", "count": "Number of Candidates"})
             fig.update_layout(bargap=0.1)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
             
             # Score vs Experience
             fig2 = px.scatter(df, x="experience_years", y="score", 
@@ -363,7 +406,7 @@ if uploaded_files:
                              title="Score vs Experience (bubble size = skills match %)",
                              labels={"experience_years": "Years of Experience", 
                                     "score": "Score", "skills_match": "Skills Match %"})
-            st.plotly_chart(fig2, use_container_width=True)
+            st.plotly_chart(fig2, width="stretch")
         
         with tab2:
             # Skills frequency
@@ -378,14 +421,14 @@ if uploaded_files:
                 
                 fig3 = px.bar(skills_count.head(15), x="skill", y="count",
                              title="Most Common Skills Across All Resumes")
-                st.plotly_chart(fig3, use_container_width=True)
+                st.plotly_chart(fig3, width="stretch")
             
             # Skills match by candidate
             fig4 = px.bar(df.head(10), x="filename", y="skills_match",
                          title="Skills Match Percentage (Top 10 Candidates)",
                          labels={"filename": "Candidate", "skills_match": "Skills Match %"})
             fig4.update_layout(xaxis_tickangle=-45)
-            st.plotly_chart(fig4, use_container_width=True)
+            st.plotly_chart(fig4, width="stretch")
         
         with tab3:
             # Display top candidates
@@ -435,7 +478,7 @@ if uploaded_files:
                                         ]
                                     }
                                 ))
-                                st.plotly_chart(fig_gauge, use_container_width=True)
+                                st.plotly_chart(fig_gauge, width="stretch")
                             
                             with col_b:
                                 st.write("**Skills Analysis:**")
@@ -447,7 +490,7 @@ if uploaded_files:
                                 if not skills_df.empty:
                                     fig_skills = px.bar(skills_df.head(8), x="skill", y="weight",
                                                        title="Skill Weights")
-                                    st.plotly_chart(fig_skills, use_container_width=True)
+                                    st.plotly_chart(fig_skills, width="stretch")
         
         # Download results
         st.markdown("## 📥 Download Results")
@@ -479,31 +522,41 @@ if uploaded_files:
 else:
     # Check for email results
     import glob
-    email_results_available = False
     
     try:
         results_files = glob.glob(os.path.join("./email_results", "*.json"))
         if results_files:
-            latest_file = max(results_files, key=os.path.getctime)
-            email_results_available = True
+            all_results = []
             
-            with open(latest_file, 'r') as f:
-                data = json.load(f)
+            # Load all files
+            for file in results_files:
+                with open(file, 'r') as f:
+                    data = json.load(f)
+                    if data.get("results"):
+                        for r in data["results"]:
+                            all_results.append(r)
+                            
+            # Deduplicate
+            unique_results = {}
+            for r in all_results:
+                key = r.get("candidate_id", f"{r['email_data']['from']}_{r['resume_info']['target_position']}")
+                unique_results[key] = r
+            
+            final_results = list(unique_results.values())
+            
+            if final_results:
+                st.markdown(f"## 📧 Email Screening Results (history)")
                 
-            st.markdown(f"## 📧 Latest Email Screening Results")
-            st.caption(f"From {latest_file} - Last updated: {datetime.fromisoformat(data.get('screening_date', datetime.now().isoformat())).strftime('%H:%M %p')}")
-            
-            # Metrics
-            m1, m2, m3, m4 = st.columns(4)
-            m1.metric("Total Emails", data.get("total_candidates", 0))
-            m2.metric("Accepted", len([r for r in data.get("results", []) if r["screening_results"]["status"] == "Accepted"]))
-            m3.metric("Needs Review", len([r for r in data.get("results", []) if r["screening_results"]["status"] == "Needs Review"]))
-            m4.metric("Rejected", len([r for r in data.get("results", []) if r["screening_results"]["status"] == "Rejected"]))
-            
-            # Convert to DataFrame for display
-            if data.get("results"):
+                # Metrics
+                m1, m2, m3, m4 = st.columns(4)
+                m1.metric("Total Candidates", len(final_results))
+                m2.metric("Accepted", len([r for r in final_results if r["screening_results"]["status"] == "Accepted"]))
+                m3.metric("Needs Review", len([r for r in final_results if r["screening_results"]["status"] == "Needs Review"]))
+                m4.metric("Rejected", len([r for r in final_results if r["screening_results"]["status"] == "Rejected"]))
+                
+                # Convert to DataFrame
                 email_rows = []
-                for r in data["results"]:
+                for r in final_results:
                     email_rows.append({
                         "Name": r["email_data"]["sender_name"],
                         "Email": r["email_data"]["from"],
@@ -511,17 +564,59 @@ else:
                         "Position": r["resume_info"]["target_position"],
                         "Score": r["screening_results"]["score"],
                         "Status": r["screening_results"]["status"],
-                        "Exp (Yrs)": r["screening_results"]["experience_years"]
+                        "Exp (Yrs)": r["screening_results"]["experience_years"],
+                        "Date": r["screening_results"].get("screened_date", "")[:10]
                     })
                 
-                st.dataframe(pd.DataFrame(email_rows))
+                df_email = pd.DataFrame(email_rows)
+                
+                # Show All Candidates first
+                st.subheader("📋 All Candidates History")
+                st.dataframe(df_email, width="stretch")
+                
+                st.divider()
+                
+                # Filter Section
+                st.subheader("🔍 Filter Candidates")
+                
+                col_f1, col_f2 = st.columns(2)
+                with col_f1:
+                    status_filter = st.multiselect(
+                        "Filter by Status",
+                        ["Accepted", "Rejected", "Needs Review"],
+                        default=["Accepted", "Needs Review"]
+                    )
+                
+                # Default filter by selected position
+                default_pos_filter = [position]
+                if position not in df_email["Position"].unique():
+                     default_pos_filter = []
+                     
+                with col_f2:
+                    pos_filter = st.multiselect(
+                        "Filter by Position",
+                        df_email["Position"].unique(),
+                        default=[p for p in default_pos_filter if p in df_email["Position"].unique()]
+                    )
+                
+                # Apply filters
+                df_filtered = df_email.copy()
+                if status_filter:
+                    df_filtered = df_filtered[df_filtered["Status"].isin(status_filter)]
+                if pos_filter:
+                    df_filtered = df_filtered[df_filtered["Position"].isin(pos_filter)]
+                
+                st.write(f"Showing {len(df_filtered)} filtered candidates:")
+                st.dataframe(df_filtered, width="stretch")
             else:
-                st.info("No resumes found in the last email check.")
+                st.info("No resumes found in email history.")
+        else:
+             st.info("No email results found.")
 
     except Exception as e:
         st.error(f"Error loading email results: {e}")
 
-    # Fallback / Info section (always show below results or if no results)
+    # Fallback / Info section
     st.markdown("---")
     st.markdown("## 🎮 Try Manual Upload")
     

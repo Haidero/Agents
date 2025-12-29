@@ -74,23 +74,29 @@ class HRGraderAgent:
             self.generate = self._generate_mock
             self.use_mock = True
     
-    def _create_hr_prompt(self, resume_text: str) -> str:
+    def _create_hr_prompt(self, resume_text: str, target_position: str) -> str:
         """Create prompt for HR agent (role-playing as per paper)"""
-        return f"""You are an experienced HR professional with 10+ years of experience in IT recruitment at top tech companies.
+        return f"""You are an experienced HR professional. Evaluate this resume for the position of "{target_position}".
 
-Please evaluate this resume for a software engineering position:
-
+RESUME CONTENT:
 {resume_text}
 
-Instructions:
-1. Assign a grade from 0 to {self.max_grade} based on relevance, experience, skills, and qualifications.
-2. Write a concise summary (max {self.summary_max_words} words) highlighting key strengths.
+INSTRUCTIONS:
+1. Analyze the candidate's relevance to "{target_position}".
+2. Evaluate specific skills, experience quality, and formatting.
+3. Provide a final score out of 100.
 
-Format your response exactly as:
-Grade: [number]/100
-Summary: [your summary here]
-
-Begin your evaluation:"""
+OUTPUT FORMAT:
+Return ONLY a strictly valid JSON object. Do not include markdown formatting or backticks.
+{{
+    "grade": <int 0-100>,
+    "summary": "<concise summary max 50 words>",
+    "relevance_score": <int 0-100>,
+    "skills_score": <int 0-100>,
+    "experience_score": <int 0-100>,
+    "formatting_score": <int 0-100>
+}}
+"""
     
     def _generate_gpt(self, prompt: str) -> str:
         """Generate using GPT API"""
@@ -99,11 +105,11 @@ Begin your evaluation:"""
         response = openai.ChatCompletion.create(
             model=self.model_name,
             messages=[
-                {"role": "system", "content": "You are an expert HR professional."},
+                {"role": "system", "content": "You are a helpful HR assistant that outputs only JSON."},
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.3,
-            max_tokens=300
+            temperature=0.2,
+            max_tokens=400
         )
         
         return response.choices[0].message.content
@@ -112,8 +118,8 @@ Begin your evaluation:"""
         """Generate using local model"""
         output = self.pipeline(
             prompt,
-            max_new_tokens=300,
-            temperature=0.3,
+            max_new_tokens=400,
+            temperature=0.2,
             do_sample=True,
             early_stopping=True
         )[0]['generated_text']
@@ -124,49 +130,64 @@ Begin your evaluation:"""
     def _generate_mock(self, prompt: str) -> str:
         """Generate mock response (Random but realistic)"""
         import random
-        grade = random.randint(70, 95)
+        base_grade = random.randint(60, 95)
         
         # Simple summary based on grade
-        if grade > 85:
-            summary = "Excellent candidate with strong relevant experience and skills. Highly recommended."
-        elif grade > 75:
-            summary = "Good candidate with solid foundation. Some specific tool experience might be missing but trainable."
+        if base_grade > 85:
+            summary = "Excellent candidate with strong relevant experience."
+        elif base_grade > 75:
+            summary = "Good candidate with solid foundation."
         else:
-            summary = "Decent candidate but lacks depth in some key requirements. Consider as backup."
+            summary = "Decent candidate but lacks specific depth."
             
-        return f"Grade: {grade}/100\nSummary: {summary}"
+        return json.dumps({
+            "grade": base_grade,
+            "summary": summary,
+            "relevance_score": base_grade - random.randint(0, 5),
+            "skills_score": base_grade + random.randint(-5, 5),
+            "experience_score": base_grade - random.randint(0, 10),
+            "formatting_score": random.randint(80, 100)
+        })
     
-    def _parse_response(self, response: str) -> Tuple[Optional[int], Optional[str]]:
+    def _parse_response(self, response: str) -> Dict:
         """Parse grade and summary from model response"""
-        grade = None
-        summary = None
-        
-        # Extract grade using regex
-        grade_match = re.search(r'Grade:\s*(\d+)\s*/\s*100', response, re.IGNORECASE)
-        if grade_match:
-            try:
-                grade = int(grade_match.group(1))
-                if grade < 0 or grade > 100:
-                    grade = None
-            except:
-                grade = None
-        
-        # Extract summary
-        summary_match = re.search(r'Summary:\s*(.+?)(?:\n\n|\Z)', response, re.IGNORECASE | re.DOTALL)
-        if summary_match:
-            summary = summary_match.group(1).strip()
-        
-        return grade, summary
+        try:
+            # Clean response if it contains markdown code blocks
+            clean_response = response.strip()
+            if "```json" in clean_response:
+                clean_response = clean_response.split("```json")[1].split("```")[0].strip()
+            elif "```" in clean_response:
+                clean_response = clean_response.split("```")[1].split("```")[0].strip()
+                
+            data = json.loads(clean_response)
+            return data
+        except Exception as e:
+            print(f"Error parsing JSON response: {e}. Raw response: {response}")
+            # Fallback
+            return {
+                "grade": 0,
+                "summary": "Error parsing agent response",
+                "relevance_score": 0,
+                "skills_score": 0, 
+                "experience_score": 0,
+                "formatting_score": 0
+            }
     
-    def grade_and_summarize(self, resume_text: str) -> Dict:
+    def grade_and_summarize(self, resume_text: str, target_position: str = "software_engineer") -> Dict:
         """Grade and summarize a single resume"""
-        prompt = self._create_hr_prompt(resume_text)
+        prompt = self._create_hr_prompt(resume_text, target_position)
         response = self.generate(prompt)
-        grade, summary = self._parse_response(response)
+        parsed_data = self._parse_response(response)
         
         return {
-            "grade": grade,
-            "summary": summary,
+            "grade": parsed_data.get("grade", 0),
+            "summary": parsed_data.get("summary", ""),
+            "details": {
+                "relevance": parsed_data.get("relevance_score", 0),
+                "skills": parsed_data.get("skills_score", 0),
+                "experience": parsed_data.get("experience_score", 0),
+                "formatting": parsed_data.get("formatting_score", 0)
+            },
             "full_response": response,
             "word_count": len(resume_text.split())
         }
